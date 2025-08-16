@@ -41,7 +41,7 @@ public class Item implements Serializable {
 		reviewing = new ArrayList<String>();
 	}
 	
-	public void addReview(double newRating) {
+	public void addReviewRating(double newRating) {
 		double nowRating = getRating()*getReviewCount();
 		reviewCount++;
 		rating = (nowRating+newRating)/(double)reviewCount;

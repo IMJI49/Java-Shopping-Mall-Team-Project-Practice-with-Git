@@ -23,9 +23,6 @@ public class Order {
 
     // 리뷰 관련
     private boolean reviewPromptShown; // 리뷰 창 한 번만 뜨게
-    private List<Integer> ratings;     // 평점 (1~5)
-    private List<String> reviews;      // 리뷰 내용
-    private String description;        // 주문 설명 (최근 리뷰 반영)
 
     // 생성자
     public Order(Customer customer, List<CartItem> cartItems, String shippingAddress) {
@@ -38,8 +35,6 @@ public class Order {
         this.shippingAddress = (shippingAddress == null || shippingAddress.isBlank()) 
             ? customer.getAddress() : shippingAddress;
         this.reviewPromptShown = false;
-        this.ratings = new ArrayList<>();
-        this.reviews = new ArrayList<>();
     }
 
     public Order(Customer customer, List<CartItem> cartItems) {
@@ -95,30 +90,11 @@ public class Order {
         }
     }
 
-    // 리뷰 등록
-    public void addReview(int rating, String review) throws ValidationException {
-        if (rating < 1 || rating > 5) throw new ValidationException("평점은 1~5 사이여야 합니다.");
-        if (review.length() < 3 || review.length() > 500) throw new ValidationException("리뷰는 3~500자여야 합니다.");
-        ratings.add(rating);
-        reviews.add(review);
-        updateDescription(review);
-    }
-
-    // 최근 리뷰 기반 주문 설명 갱신
-    private void updateDescription(String latestReview) {
-        this.description = "최근 리뷰: " + latestReview;
-    }
-
-    // 평균 평점
-    public double getAverageRating() {
-        return ratings.stream().mapToInt(Integer::intValue).average().orElse(0.0);
-    }
-
     @Override
     public String toString() {
         return String.format(
-            "주문번호: %s\n주문일: %s\n상태: %s\n총액: %d원\n평균 평점: %.2f\n리뷰 개수: %d",
-            orderId, orderDate, status, totalAmount, getAverageRating(), reviews.size()
+            "주문번호: %s\n주문일: %s\n상태: %s\n총액: %d원",
+            orderId, orderDate, status, totalAmount
         );
     }
 
@@ -131,12 +107,6 @@ public class Order {
             sb.append("- ").append(ci.getItem().getName())
               .append(" x ").append(ci.getQuantity())
               .append(" = ").append(ci.getTotalPrice()).append("원\n");
-        }
-        if (!reviews.isEmpty()) {
-            sb.append("\n=== 리뷰 목록 ===\n");
-            for (int i = 0; i < reviews.size(); i++) {
-                sb.append(String.format("[%d점] %s%n", ratings.get(i), reviews.get(i)));
-            }
         }
         return sb.toString();
     }

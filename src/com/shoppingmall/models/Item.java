@@ -5,9 +5,7 @@ import java.util.ArrayList;
 
 public class Item implements Serializable {
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private String itemID;
 	private String name;
@@ -41,7 +39,7 @@ public class Item implements Serializable {
 		reviewing = new ArrayList<String>();
 	}
 	
-	public void addReview(double newRating) {
+	public void addReviewRating(double newRating) {
 		double nowRating = getRating()*getReviewCount();
 		reviewCount++;
 		rating = (nowRating+newRating)/(double)reviewCount;

@@ -14,16 +14,15 @@ public CustomerLoginController() {
 	this.scanner = new Scanner(System.in);
 	this.customer = null;
 	this.isLoggedIn = false;
-	
 }
 
 	public boolean login() {
-		System.out.println("=== 고객 로그인 메뉴 ===");
+		System.out.println("=== 로그인 메뉴 ===");
 		
-        System.out.print("고객 ID: ");
+        System.out.print("ID: ");
         String id = scanner.nextLine().trim();
         
-        System.out.print("고객: ");
+        System.out.print("비밀번호 : ");
         String password = scanner.nextLine().trim();
         
         
@@ -34,7 +33,7 @@ public CustomerLoginController() {
         	this.customer = customer;
         	this.isLoggedIn = true;
     		
-        	System.out.println("\n ✅ 로그인 성공! 고객 " + customer.getId() + "님 환영합니다!");
+        	System.out.println("\n ✅ 로그인 성공! 고객 " + customer.getName() + "님 환영합니다!");
     		
     		return true;
     		
@@ -64,16 +63,6 @@ public CustomerLoginController() {
 
 	public boolean isLoggedIn() {
 		return this.isLoggedIn && this.customer != null; 
-	}
-
-	
-	// 로그인 상태 필요(로그인 필요한 기능을 사용하는 경우)
-	public boolean requireLogin() {
-		if (customer == null) {
-			System.out.println("이 기능을 사용하려면 먼저 로그인해주세요.");
-			return false;
-		}
-		return true;
 	}
 	
 }

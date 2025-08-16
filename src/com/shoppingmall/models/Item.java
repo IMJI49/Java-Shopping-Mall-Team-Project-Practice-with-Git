@@ -5,9 +5,7 @@ import java.util.ArrayList;
 
 public class Item implements Serializable {
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private String itemID;
 	private String name;

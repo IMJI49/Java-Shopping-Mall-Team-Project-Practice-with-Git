@@ -12,14 +12,17 @@ public class ManagerService {
 	 *추가 구현시에는 리뷰까지만
 	 */
 	/*
-	 * 상품 제고까지 확인
+	 * 상품 재고까지 확인
 	 * 1~6번 없애고
 	 * 
-	 * 1. 주문 내역 확인
-	 * 2. 상품 관리 취소관리
-	 * 3. 마이페이지 - customer mypage랑 동일 4,5 감추는것으로
-	 * 4. 관리 상품관리 (change 재고 관리 : quantyty int값으로 받아서 증가만)  (5번 전체 상품 보기랑 같음)
-	 * 5. 사용자 관리 : 
+	 * 1. 주문 관리
+	 * 		1. 주문 내역 확인
+	 * 		2. 주문 confirm
+	 * 		3. 주문 취소
+	 * 2. 마이페이지 - customer mypage랑 동일 4,5 감추는것으로
+	 * 3. 관리 상품관리 (change 재고 관리 : quantyty int값으로 받아서 증가만)  (5번 전체 상품 보기랑 같음)
+	 * 		1. 
+	 * 4. 사용자 관리 : 
 	 * 		1. 전체 회원 조회 (이름, id, 주소, 폰넘버) - 관리자 나오면 안됩니다
 	 * 		2. 회원검색 이름으로 검색
 	 *		3. 상세정보는 id 검색 : 비밀번호 제외 모든값 나오게 (주문 내역도 포함)
@@ -33,6 +36,7 @@ public class ManagerService {
 	public ManagerService() {
 		scanner = new Scanner(System.in);
 	}
+	
 }
 
 	

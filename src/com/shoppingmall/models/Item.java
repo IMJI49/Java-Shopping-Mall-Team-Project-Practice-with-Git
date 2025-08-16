@@ -1,10 +1,10 @@
 package com.shoppingmall.models;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Item implements Serializable {
-
 
 	private static final long serialVersionUID = 1L;
 	private String itemID;
@@ -18,7 +18,7 @@ public class Item implements Serializable {
 	private ArrayList<Double> rating;
 	private ArrayList<String> review;
 	private int sellCount;
-
+	private LocalDate regidate;
 
 	public Item(String name, String category, int price, int quantity, String description) {
 		itemID = "P" + String.format("%04d", idNum);
@@ -30,16 +30,19 @@ public class Item implements Serializable {
 		idNum++;
 		rating = new ArrayList<Double>();
 		review = new ArrayList<String>();
+		regidate = LocalDate.now();
 	}
+
 	public void addRating(double rate) {
 		rating.add(rate);
 	}
+
 	public double averageReviewRating() {
 		double sumRate = 0;
 		for (Double rate : rating) {
 			sumRate += rate;
 		}
-		return sumRate/rating.size();
+		return sumRate / rating.size();
 	}
 
 	public ArrayList<Double> getRating() {
@@ -57,15 +60,14 @@ public class Item implements Serializable {
 	public String getName() {
 		return name;
 	}
+
 	public int getSellCount() {
 		return sellCount;
 	}
 
-
 	public String getItemID() {
 		return itemID;
 	}
-
 
 	public int getPrice() {
 		return price;
@@ -88,14 +90,26 @@ public class Item implements Serializable {
 		return true;
 	}
 
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public int discount(double offRate) {
-		this.price *= (1-offRate);
+		this.price *= (1 - offRate);
 		return this.price;
+	}
+
+	public LocalDate getRegidate() {
+		return regidate;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s", name);
+		return String.format("이름 : %s, 카테고리 : %s, 가격 : %,d", name,category,price);
 	}
 
 }

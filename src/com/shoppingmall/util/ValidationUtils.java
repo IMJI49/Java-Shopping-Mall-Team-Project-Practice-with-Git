@@ -1,7 +1,5 @@
 package com.shoppingmall.util;
 
-import javax.naming.InsufficientResourcesException;
-
 import com.shoppingmall.exception.CustomerNotFoundException;
 import com.shoppingmall.exception.InsufficientStockException;
 import com.shoppingmall.exception.ProductNotFoundException;
@@ -18,7 +16,6 @@ public class ValidationUtils {
 	private ValidationUtils() {
 		// 다른 곳에서 생성자 못만들게끔
 	}
-	
 	public static void requireNotNullAndEmpty(String str, String message) throws ValidationException {
 		if (str == null || str.trim().isEmpty()) {
 			throw new ValidationException(message);

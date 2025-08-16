@@ -18,6 +18,8 @@ public class Order {
     private List<CartItem> cartItems;
     private long totalAmount;
     private String shippingAddress;
+    // 리뷰 관련
+    private boolean reviewPromptShown; // 리뷰 창 한 번만 뜨게
 
     // 생성자
     public Order(Customer customer, List<CartItem> cartItems, String shippingAddress) {
@@ -27,11 +29,20 @@ public class Order {
         this.status = Status.PENDING;
         this.cartItems = new ArrayList<>(cartItems);
         this.totalAmount = calculateTotal();
+        reviewPromptShown = false;
         this.shippingAddress = (shippingAddress == null || shippingAddress.isBlank()) 
             ? customer.getAddress() : shippingAddress;
     }
 
-    public Order(Customer customer, List<CartItem> cartItems) {
+    public boolean isReviewPromptShown() {
+		return reviewPromptShown;
+	}
+
+	public void setReviewPromptShown(boolean reviewPromptShown) {
+		this.reviewPromptShown = reviewPromptShown;
+	}
+
+	public Order(Customer customer, List<CartItem> cartItems) {
         this(customer, cartItems, customer.getAddress());
     }
 

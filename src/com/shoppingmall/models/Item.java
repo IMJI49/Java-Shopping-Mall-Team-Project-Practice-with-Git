@@ -19,15 +19,8 @@ public class Item implements Serializable {
 	private double rating;
 	private ArrayList<String> reviewing;
 	private int reviewCount = 0;
-//	"P"+String.format("%4d", idNum);
+	private int sellCount;
 
-	public int getReviewCount() {
-		return reviewCount;
-	}
-
-	public String getItemID() {
-		return itemID;
-	}
 
 	public Item(String name, String category, int price, int quantity, String description) {
 		itemID = "P" + String.format("%04d", idNum);
@@ -66,6 +59,18 @@ public class Item implements Serializable {
 	public String getName() {
 		return name;
 	}
+	public int getSellCount() {
+		return sellCount;
+	}
+
+	public int getReviewCount() {
+		return reviewCount;
+	}
+
+	public String getItemID() {
+		return itemID;
+	}
+
 
 	public int getPrice() {
 		return price;

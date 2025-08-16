@@ -22,6 +22,7 @@ public class CartItem {
     // 수량 감소 (1 미만이면 예외)
     public void reduceQuantity(int amount) throws InsufficientStockException {
         if (amount <= 0) return;
+        
         if (quantity - amount < 1) {
             throw new InsufficientStockException("구매 수량은 최소 1개 이상이어야 합니다.");
         }

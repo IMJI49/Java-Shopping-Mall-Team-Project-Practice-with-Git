@@ -96,26 +96,7 @@ public class ProductRepository {
 	return foundItems;
 			
 	}
-		
-		
-	// 설명으로 상품 검색
-	public Object findByDesc(String desc) {
-	List<Item> items = FileManagement.readFromFile(FILE_NAME);
-	
-	List<Item> foundItems = items.stream()
-					            .filter(u -> u.getProdDesc() != null && u.getProdDesc().contains(desc))
-					            .toList();
-	
-	if(foundItems.isEmpty()) {
-		return null;
-	}
-	
-	foundItems.forEach(System.out::println);
-	
-	return foundItems;
-			
-	}
-		
+	// (1. 1만원 미만, 2. 1-5만원, 3. 5-10만원,4. 10만원 이상)
 	// 가격대로 상품 검색
 	public Object findByPriceRange(int minPrice, int maxPrice) {
 	List<Item> items = FileManagement.readFromFile(FILE_NAME);
@@ -169,7 +150,7 @@ public class ProductRepository {
 	    	
 	        item.getReview().add(reviewText);
 	        item.getReviewerIds().add(customerId);
-	        item.getRatings().add(rating);
+	        item.addReviewRating(rating)
 	        
 	        // Item 리스트 다시 저장
 	        FileManagement.writeToFile(FILE_NAME, items);
@@ -186,7 +167,7 @@ public class ProductRepository {
 	    
 	    if (item != null) {
 	        System.out.println("=== " + item.getName() + "의 전체 리뷰 요약 ===");
-	        System.out.println("평균 평점: " + String.format("%.1f", getAverageRating(itemId)));
+	        System.out.println("평균 평점: " + String.format("%.1f", getRating(itemId)));
 	        System.out.println("총 리뷰 개수: " + item.getReview().size());
 	        
 	        if (!item.getReview().isEmpty()) {
@@ -209,42 +190,7 @@ public class ProductRepository {
 	        System.out.println("해당 ID의 상품을 찾을 수 없습니다: " + itemId);
 	    }
 	}
-	
-		
-	// 평점 평균 계산
-	public double getAverageRating(String itemId) {
-	    Item item = getItemById(itemId);
-	    
-	    // 상품이 없거나 평점이 없으면 0
-	    if (item == null || item.getRatings().isEmpty()) {
-	        return 0.0;  
-	    }
-	    
-	    
-	    
-	    List<Integer> ratings = item.getRatings();
-	    
-	    //평균구하기
-	    int sum = 0;
-	    for(int rating: ratings) {
-	    	sum += rating;
-	    }
-	    
-	    return (double)sum / ratings.size();
-	}
-	
-	//평균도 함께 표시
-	public void showItemSummary(String itemId) {
-		Item item = getItemById(itemId);
-		
-		if(item != null) {
-			System.out.print(item.toString());
-			System.out.println(" 평균 평점: "+getAverageRating(itemId));
-		}
-	}
-		
-		
-		
+
 		
 }
 

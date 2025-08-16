@@ -44,15 +44,18 @@ public class ValidationUtils {
 		}
 	}
 
-	@SuppressWarnings("unused")
-	public static void requireNotNullObject(Object obj, String message) throws ShoppingMallException {
-		if (obj.getClass() == Item.class && obj == null) {
-			throw new ProductNotFoundException(message);
-		} else if (obj.getClass() == Customer.class && obj == null) {
-			throw new CustomerNotFoundException(message);
-		}
-	}
 
+	public static void requireNotNullItem(Item item, String message) throws ProductNotFoundException {
+		if (item == null) {
+			throw new ProductNotFoundException(message);
+		} 
+	}
+	public static void requireNotNullCustomer(Customer customer, String message) throws CustomerNotFoundException {
+		if (customer == null) {
+			throw new CustomerNotFoundException(message);
+		} 
+	}
+	 
 	public static void requireSufficientStock(Item item, int quantity, String message)
 			throws InsufficientResourcesException {
 		if ((item.getQuantity() - quantity) < 0) {

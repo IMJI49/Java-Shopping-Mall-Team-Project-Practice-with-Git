@@ -10,7 +10,7 @@ public class Order {
     public enum Status { PENDING, CONFIRM, SHIPPING, DELIVERED, CANCELLED }
 
     private static long orderSeq = 1; // 주문 일련번호
-    private String orderId;
+    private String orderID;
     private Customer customer;
     private LocalDateTime orderDate;
 
@@ -21,7 +21,7 @@ public class Order {
 
     // 생성자
     public Order(Customer customer, List<CartItem> cartItems, String shippingAddress) {
-        this.orderId = "O" + String.format("%08d", orderSeq++);
+        this.orderID = "O" + String.format("%08d", orderSeq++);
         this.customer = customer;
         this.orderDate = LocalDateTime.now();
         this.status = Status.PENDING;
@@ -46,7 +46,7 @@ public class Order {
     public String toString() {
         return String.format(
             "주문번호: %s\n주문일: %s\n상태: %s\n총액: %d원",
-            orderId, orderDate, status, totalAmount
+            orderID, orderDate, status, totalAmount
         );
     }
 
@@ -64,10 +64,11 @@ public class Order {
     }
 
     // Getter
+
     public void setStatus(Status status) {
     	this.status = status;
     }
-    public String getOrderId() { return orderId; }
+    public String getOrderID() { return orderID; }
     public Customer getCustomer() { return customer; }
     public LocalDateTime getOrderDate() { return orderDate; }
     public Status getStatus() { return status; }

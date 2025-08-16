@@ -3,6 +3,7 @@ package com.shoppingmall.util;
 import javax.naming.InsufficientResourcesException;
 
 import com.shoppingmall.exception.CustomerNotFoundException;
+import com.shoppingmall.exception.InsufficientStockException;
 import com.shoppingmall.exception.ProductNotFoundException;
 import com.shoppingmall.exception.ValidationException;
 import com.shoppingmall.models.Customer;
@@ -57,9 +58,9 @@ public class ValidationUtils {
 	}
 	 
 	public static void requireSufficientStock(Item item, int quantity, String message)
-			throws InsufficientResourcesException {
+			throws InsufficientStockException {
 		if ((item.getQuantity() - quantity) < 0) {
-			throw new InsufficientResourcesException(message);
+			throw new InsufficientStockException(message);
 		}
 	}
 

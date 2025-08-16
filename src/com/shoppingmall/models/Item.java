@@ -14,9 +14,9 @@ public class Item implements Serializable {
 	private int quantity;
 	private String description;
 	private static int idNum = 1;
-	private double rating;
-	private ArrayList<String> reviewing;
-	private int reviewCount = 0;
+//	private double rating;
+	private ArrayList<Double> rating;
+	private ArrayList<String> review;
 	private int sellCount;
 
 
@@ -28,30 +28,30 @@ public class Item implements Serializable {
 		this.quantity = quantity;
 		this.description = description;
 		idNum++;
-		rating = 0.0;
-		reviewing = new ArrayList<String>();
+		rating = new ArrayList<Double>();
+		review = new ArrayList<String>();
 	}
-	
-	public void addReviewRating(double newRating) {
-		double nowRating = getRating()*getReviewCount();
-		reviewCount++;
-		rating = (nowRating+newRating)/(double)reviewCount;
+	public void addRating(double rate) {
+		rating.add(rate);
+	}
+	public double averageReviewRating() {
+		double sumRate = 0;
+		for (Double rate : rating) {
+			sumRate += rate;
+		}
+		return sumRate/rating.size();
 	}
 
-	public double getRating() {
+	public ArrayList<Double> getRating() {
 		return rating;
 	}
 
-	public void setRating(double rate) {
-		this.rating = rate;
+	public ArrayList<String> getReview() {
+		return review;
 	}
 
-	public ArrayList<String> getReviewing() {
-		return reviewing;
-	}
-
-	public void setReviewing(ArrayList<String> reviewing) {
-		this.reviewing = reviewing;
+	public void addReviewing(String review) {
+		this.review.add(review);
 	}
 
 	public String getName() {
@@ -61,9 +61,6 @@ public class Item implements Serializable {
 		return sellCount;
 	}
 
-	public int getReviewCount() {
-		return reviewCount;
-	}
 
 	public String getItemID() {
 		return itemID;

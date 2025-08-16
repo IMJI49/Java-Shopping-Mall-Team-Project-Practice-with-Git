@@ -6,7 +6,9 @@ public class Customer extends Person {
 	 */
 	private static final long serialVersionUID = 1L;
 	private double rating;
-	
+	private String review;
+
+
 	public Customer(String id, String password, String name, String address, String email, String phoneNumber) {
 		super(id, password, name, address, email, phoneNumber);
 		getRole();
@@ -18,6 +20,14 @@ public class Customer extends Person {
 
 	public void setRating(double rating) {
 		this.rating = rating;
+	}
+	
+	public String getReview() {
+		return review;
+	}
+
+	public void setReview(String review) {
+		this.review = review;
 	}
 	
 	@Override

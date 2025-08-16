@@ -63,7 +63,14 @@ public class ValidationUtils {
 			throw new InsufficientStockException(message);
 		}
 	}
-
+	public static void correctIDPassword(String id, String password, Customer customer) throws ValidationException {
+		if (customer.getId() != id) {
+			throw new ValidationException("아이디 혹은 비밀번호가 일치하지 안습니다.");
+		}
+		if (customer.getPassword() != password) {
+			throw new ValidationException("아이디 혹은 비밀번호가 일치하지 안습니다.");
+		}
+	}
 	public static void orderPendingCheck(Status status, String string) {
 		
 	}

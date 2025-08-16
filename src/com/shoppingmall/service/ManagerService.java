@@ -1,5 +1,9 @@
 package com.shoppingmall.service;
 
+import java.util.Scanner;
+
+import com.shoppingmall.models.Manager;
+
 public class ManagerService {
 	/*
 	 * order status : confirm, cancel, shipping
@@ -24,6 +28,11 @@ public class ManagerService {
 	 * 6. 로그아웃
 	 * 추가 구현 기능 판매된 아이템 보기 (statistic)
 	 */
+	private Scanner scanner;
+	private Manager manager;
+	public ManagerService() {
+		scanner = new Scanner(System.in);
+	}
 }
 
 	

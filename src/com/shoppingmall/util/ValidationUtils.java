@@ -5,7 +5,6 @@ import javax.naming.InsufficientResourcesException;
 import com.shoppingmall.exception.CustomerNotFoundException;
 import com.shoppingmall.exception.InsufficientStockException;
 import com.shoppingmall.exception.ProductNotFoundException;
-import com.shoppingmall.exception.ShoppingMallException;
 import com.shoppingmall.exception.ValidationException;
 import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;

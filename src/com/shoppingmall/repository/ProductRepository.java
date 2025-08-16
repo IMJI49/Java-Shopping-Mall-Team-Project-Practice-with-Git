@@ -7,7 +7,7 @@ import com.shoppingmall.persistence.FileManagement;
 import com.shoppingmall.util.Constants;
 
 public class ProductRepository {
-	
+	// delete method 생성
 	// 파일명 상수
 	public static final String FILE_NAME = Constants.PRODUCT_DATA_FILE;
 	

@@ -10,7 +10,7 @@ import com.shoppingmall.util.Constants;
 
 public class UserRepository {
 
-
+	// delete method 생성
 	// 파일명 상수
 	public static final String FILE_NAME = Constants.USER_DATA_FILE;
 

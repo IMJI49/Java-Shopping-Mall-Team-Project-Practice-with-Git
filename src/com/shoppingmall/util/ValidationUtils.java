@@ -14,6 +14,10 @@ public class ValidationUtils {
 	 * exception 여기 throw 빈 문자"", null값 확인 길이 min, max 확인
 	 * 
 	 */
+	private ValidationUtils() {
+		// 다른 곳에서 생성자 못만들게끔
+	}
+	
 	public static void requireNotNullAndEmpty(String str, String message) throws ValidationException {
 		if (str == null || str.trim().isEmpty()) {
 			throw new ValidationException(message);
@@ -34,6 +38,12 @@ public class ValidationUtils {
 		}
 	}
 
+	public static void requireMinQuantity(int quantity, String message) throws ValidationException {
+		if (quantity < 1) {
+			throw new ValidationException(message);
+		}
+	}
+
 	@SuppressWarnings("unused")
 	public static void requireNotNullObject(Object obj, String message) throws ShoppingMallException {
 		if (obj.getClass() == Item.class && obj == null) {
@@ -49,7 +59,6 @@ public class ValidationUtils {
 			throw new InsufficientResourcesException(message);
 		}
 	}
-
-	private ValidationUtils() {
-	}
+	
+	
 }

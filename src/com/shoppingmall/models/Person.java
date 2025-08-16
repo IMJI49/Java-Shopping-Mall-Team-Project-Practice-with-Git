@@ -9,19 +9,19 @@ public abstract class Person implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	protected String name;
-	protected String adress;
+	protected String address;
 	protected String email;
 	protected String id;
 	protected String password;
 	protected String phoneNumber;
 	public abstract String getRole();
 	
-	public Person(String id, String password, String name, String adress, String email, 
+	public Person(String id, String password, String name, String address, String email, 
 			String phoneNumber) {
 		this.id = id;
 		this.name = name;
 		this.password = password;
-		this.adress = adress;
+		this.address = address;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		getRole();
@@ -42,14 +42,14 @@ public abstract class Person implements Serializable {
 	public String getName() {
 		return name;
 	}
-	public String getAdress() {
-		return adress;
+	public String getAddress() {
+		return address;
 	}
 	public String getPassword() {
 		return password;
 	}
-	public void setAdress(String adress) {
-		this.adress = adress;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public void setEmail(String email) {
@@ -66,7 +66,7 @@ public abstract class Person implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("이름 : %s, 아이디 주소 : %s, 비밀번호 : %s", name,adress,"*".repeat(password.length()));
+		return String.format("이름 : %s, 아이디 주소 : %s, 비밀번호 : %s", name,address,password);
 			
 	}
 	

@@ -8,6 +8,7 @@ import com.shoppingmall.exception.ShoppingMallException;
 import com.shoppingmall.exception.ValidationException;
 import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;
+import com.shoppingmall.models.Order.Status;
 
 public class ValidationUtils {
 	/*
@@ -61,6 +62,10 @@ public class ValidationUtils {
 		if ((item.getQuantity() - quantity) < 0) {
 			throw new InsufficientResourcesException(message);
 		}
+	}
+
+	public static void orderPendingCheck(Status status, String string) {
+		
 	}
 	
 	

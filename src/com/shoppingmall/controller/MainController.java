@@ -175,22 +175,29 @@ public class MainController {
 										 *  제품 명 받고 제품 명을 통한 item받아서 set으로 수정
 										 */
 										System.out.println("\n==========  상품 수정  ===========");
+										System.out.println("상품의 이름을 입력해주세요: _");
+										String name = scanner.nextLine();
 										System.out.print("상품의 가격을 입력해주세요: _");
 										String sPrice = scanner.nextLine();
 										int price = Integer.parseInt(sPrice);
 										System.out.print("상품의 설명을 입력해주세요: _");
 										String description = scanner.nextLine();
-										System.out.println("상품의 이름을 입력해주세요: _");
-										String name = scanner.nextLine();
 										
 										System.out.println("상품이 수정되었습니다!");
 										System.out.println("================================\n");
 									}else if (menu.equals("3")) {
+										System.out.println("\n=========   상품 삭제   ==========");
+										System.out.print("삭제할 상품의 이름을 검색하세요: _");
+										String name = scanner.nextLine();
 										
+										System.out.println("성공적으로 삭제되었습니다.");
+										System.out.println("==================================");
 									}else if (menu.equals("4")) {
 										
 									}else if (menu.equals("5")) {
-										
+										System.out.println("\n=========   상품 목록 조회   ==========");
+								
+										System.out.println("======================================\n");
 									}else if (menu.equals("0")) {
 										break;
 									}else {
@@ -215,14 +222,24 @@ public class MainController {
 									if(menu.equals("1")) {
 										
 									}else if (menu.equals("2")) {
-										System.out.println("========   회원 검색   =========");
+										System.out.println("\n========   회원 검색   =========");
 										System.out.print("검색할 회원의 이름을 입력하세요: _");
+										String name = scanner.nextLine();
 										
-										System.out.println("==============================");
+										System.out.println("==============================\n");
 									}else if (menu.equals("3")) {
+										System.out.println("\n========  회원 상세 정보  =========");
+										System.out.print("정보를 확인할 회원의 id를 입력하세요: _");
+										String searchId = scanner.nextLine();
 										
+										System.out.println("==================================");
 									}else if (menu.equals("4")) {
+										System.out.println("\n========   회원 강제 탈퇴   ========");
+										System.out.print("탈퇴시킬 회원의 id를 입력해주세요: _");
+										String leaveId = scanner.nextLine();
 										
+										System.out.println("탈퇴시켰습니다.");
+										System.out.println("====================================");
 									}else if (menu.equals("0")) {
 										break;
 									}else {
@@ -333,9 +350,12 @@ public class MainController {
 										System.out.print("추가할 상품의 이름을 입력해주세요: _");
 										String name = scanner.nextLine();
 									}else if (menu.equals("3")) {
-										
+										System.out.print("변경할 수량을 입력해주세요: _");
+										String sAmount = scanner.nextLine();
+										int amount = Integer.parseInt(sAmount);
 									}else if (menu.equals("4")) {
-										
+										System.out.print("삭제할 상품의 상품명을 입력해주세요: _");
+										System.out.println("");
 									}else if (menu.equals("5")) {
 										
 									}else if (menu.equals("0")) {
@@ -410,15 +430,21 @@ public class MainController {
 						if(menu.equals("1")) {
 							
 						}else if (menu.equals("2")) {
-							
+							System.out.print("카테고리를 입력해 주세요");
+							String category = scanner.nextLine();
 						}else if (menu.equals("3")) {
-							
+							System.out.print("번호를 선택해 주세요.(1. 3만원 미만, 2. 3-10만원, 3. 10-50만원,4. 50만원 이상)");
+							int number = scanner.nextInt();
+							scanner.nextLine();
 						}else if (menu.equals("4")) {
-							
+							userService.findBestSeller();
 						}else if (menu.equals("5")) {
+							// 신상품은 등록 3일 이내 제품
 							
 						}else if (menu.equals("6")) {
-							
+							System.out.print("상품 이름을 입력해 주세요");
+							String itemname = scanner.nextLine();
+							userService.showItemDetails(itemname);
 						}else if (menu.equals("0")) {
 							break;
 						}else {

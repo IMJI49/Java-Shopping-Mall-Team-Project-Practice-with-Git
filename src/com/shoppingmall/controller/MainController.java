@@ -36,7 +36,7 @@ public class MainController {
 			System.out.println("╔════════════════════════════════════════════╗");
 			System.out.println("║     🛍️  "+userService.getName()+"                 ║");
 			System.out.println("╚════════════════════════════════════════════╝");
-			System.out.println("1.  회원가입");
+			System.out.println("1. 회원가입");
 			System.out.println("2. 로그인");
 			System.out.println("3. 상품 둘러보기");
 			System.out.println("0. 프로그램 종료");

@@ -83,11 +83,17 @@ public class MainController {
 									
 									menu = scanner.nextLine();
 									if(menu.equals("1")) {
+										System.out.println("\n========   주문 내역   =========");
 										
+										System.out.println("================================\n");
 									}else if (menu.equals("2")) {
+										System.out.println("\n======   주문 confirm   =======");
 										
+										System.out.println("================================\n");
 									}else if (menu.equals("3")) {
+										System.out.println("\n=======   주문 취소   =======");
 										
+										System.out.println("==============================");
 									}else if (menu.equals("0")) {
 										break;
 									}else {
@@ -109,16 +115,16 @@ public class MainController {
 									
 									menu = scanner.nextLine();
 									if(menu.equals("1")) {
-										
+										//내 정보 조회
 									}else if (menu.equals("2")) {
-										System.out.println("\n======== 비밀번호를 변경합니다 ==========");
+										System.out.println("\n======== 비밀번호 변경 ==========");
 										System.out.print("변경할 비밀번호를 입력해주세요: _");
 										String changePassword = scanner.nextLine();
 										
 										System.out.println("변경이 완료되었습니다.");
 										System.out.println("====================================\n");
 									}else if (menu.equals("3")) {
-										System.out.println("\n======== 개인정보를 변경합니다 ==========");
+										System.out.println("\n======== 개인정보 수정 ==========");
 										System.out.print("변경할 주소를 입력하세요: _");
 										String address = scanner.nextLine();
 										System.out.print("변경할 이메일을 입력하세요: _");
@@ -193,7 +199,7 @@ public class MainController {
 										System.out.println("성공적으로 삭제되었습니다.");
 										System.out.println("==================================");
 									}else if (menu.equals("4")) {
-										
+										//재고 관리
 									}else if (menu.equals("5")) {
 										System.out.println("\n=========   상품 목록 조회   ==========");
 								
@@ -220,7 +226,9 @@ public class MainController {
 									
 									menu = scanner.nextLine();
 									if(menu.equals("1")) {
+										System.out.println("\n=======  전체 회원 조회  =========");
 										
+										System.out.println("=================================\n");
 									}else if (menu.equals("2")) {
 										System.out.println("\n========   회원 검색   =========");
 										System.out.print("검색할 회원의 이름을 입력하세요: _");
@@ -292,34 +300,42 @@ public class MainController {
 									
 									menu = scanner.nextLine();
 									if(menu.equals("1")) {
+										System.out.println("\n======= 전체 상품 보기 ==========");
 										
+										System.out.println("================================\n");
 									}else if (menu.equals("2")) {
+										//카테고리별 보기
+										System.out.println("\n======= 카테고리별 보기 ========");
 										System.out.print("카테고리를 입력해 주세요");
 										String category = scanner.nextLine();
+										
+										System.out.println("================================\n");
 									}else if (menu.equals("3")) {
+										//가격대별 보기
+										System.out.println("\n======== 가격대별 보기 ===========");
 										System.out.print("번호를 선택해 주세요.(1. 3만원 미만, 2. 3-10만원, 3. 10-50만원,4. 50만원 이상)");
 										int number = scanner.nextInt();
 										scanner.nextLine();
+										
+										System.out.println("=================================\n");
 									}else if (menu.equals("4")) {
+										//베스트셀러
+										System.out.println("\n========  베스트셀러  ==========");
 										userService.findBestSeller();
+										System.out.println("===============================\n");
 									}else if (menu.equals("5")) {
 										// 신상품은 등록 3일 이내 제품
+										System.out.println("\n======== 신상품 보기 ============");
 										
+										System.out.println("================================\n");
 									}else if (menu.equals("6")) {
+										//상품 상세보기
+										System.out.println("\n==========  상품 상세보기  ===========");
 										System.out.print("상품 이름을 입력해 주세요");
 										String itemname = scanner.nextLine();
 										userService.showItemDetails(itemname);
-									}else if (menu.equals("7")) {
-										/*
-										 *  y/n으로 받기로 하였음
-										 *  orderRepository에서 order가져오고 이 때 orderID가져와야함 
-										 *  이 때 order가 deleverd상태이면서
-										 */
 										
-										System.out.print("리뷰할 상품의 주문 번호를 입력하세요 : _");
-										String orderId = scanner.nextLine();
-										userService.promptReview(null, orderId);
-//										userService.review(itemId);
+										System.out.println("=====================================\n");
 									}else if (menu.equals("0")) {
 										break;
 									}else {
@@ -327,7 +343,9 @@ public class MainController {
 									}
 								}
 							}else if (menu.equals("2")) {
-								
+								//상품 검색
+								System.out.print("검색할 상품의 상품명을 입력해주세요: _");
+								String name = scanner.nextLine();
 							}else if (menu.equals("3")) {
 								// 장바구니 관리
 								while(true) {
@@ -355,7 +373,9 @@ public class MainController {
 										int amount = Integer.parseInt(sAmount);
 									}else if (menu.equals("4")) {
 										System.out.print("삭제할 상품의 상품명을 입력해주세요: _");
-										System.out.println("");
+										String name = scanner.nextLine();
+										
+										System.out.println("성공적으로 삭제되었습니다!");
 									}else if (menu.equals("5")) {
 										
 									}else if (menu.equals("0")) {
@@ -365,9 +385,9 @@ public class MainController {
 									}
 								}
 							}else if (menu.equals("4")) {
-								
+								//주문하기
 							}else if (menu.equals("5")) {
-								
+								System.out.println("요청하신 주문 내역입니다.");
 							}else if (menu.equals("6")) {
 								// 일반 사용자 마이페이지
 								while(true) {
@@ -385,15 +405,34 @@ public class MainController {
 									
 									menu = scanner.nextLine();
 									if(menu.equals("1")) {
+										System.out.println("\n======== 내 정보 조회 ========");
 										
+										System.out.println("==============================\n");
 									}else if (menu.equals("2")) {
+										System.out.println("\n======== 비밀번호 변경  ========");
+										System.out.print("변경할 비밀번호를 입력해주세요: _");
+										String changePassword = scanner.nextLine();
 										
+										System.out.println("비밀번호가 변경되었습니다!");
+										System.out.println("================================\n");
 									}else if (menu.equals("3")) {
+										System.out.println("\n======== 개인정보를 변경합니다 ==========");
+										System.out.print("변경할 주소를 입력하세요: _");
+										String address = scanner.nextLine();
+										System.out.print("변경할 이메일을 입력하세요: _");
+										String email = scanner.nextLine();
+										System.out.print("변경할 전화번호를 입력하세요: _");
+										String phoneNumber = scanner.nextLine();
 										
+										System.out.println("변경이 완료되었습니다.");
+										System.out.println("====================================\n");
 									}else if (menu.equals("4")) {
 										/*
 										 * delivered가 된 상품이 존재하면 리뷰달기
 										 */
+										System.out.println("\n========  주문 내역 조회  =============");
+										
+										System.out.println("======================================\n");
 									}else if (menu.equals("5")) {
 										
 									}else if (menu.equals("0")) {
@@ -428,23 +467,42 @@ public class MainController {
 						
 						menu = scanner.nextLine();
 						if(menu.equals("1")) {
+							System.out.println("\n======= 전체 상품 보기 ==========");
 							
+							System.out.println("================================\n");
 						}else if (menu.equals("2")) {
+							//카테고리별 보기
+							System.out.println("\n======= 카테고리별 보기 ========");
 							System.out.print("카테고리를 입력해 주세요");
 							String category = scanner.nextLine();
+							
+							System.out.println("================================\n");
 						}else if (menu.equals("3")) {
+							//가격대별 보기
+							System.out.println("\n======== 가격대별 보기 ===========");
 							System.out.print("번호를 선택해 주세요.(1. 3만원 미만, 2. 3-10만원, 3. 10-50만원,4. 50만원 이상)");
 							int number = scanner.nextInt();
 							scanner.nextLine();
+							
+							System.out.println("=================================\n");
 						}else if (menu.equals("4")) {
+							//베스트셀러
+							System.out.println("\n========  베스트셀러  ==========");
 							userService.findBestSeller();
+							System.out.println("===============================\n");
 						}else if (menu.equals("5")) {
 							// 신상품은 등록 3일 이내 제품
+							System.out.println("\n======== 신상품 보기 ============");
 							
+							System.out.println("================================\n");
 						}else if (menu.equals("6")) {
+							//상품 상세보기
+							System.out.println("\n==========  상품 상세보기  ===========");
 							System.out.print("상품 이름을 입력해 주세요");
 							String itemname = scanner.nextLine();
 							userService.showItemDetails(itemname);
+							
+							System.out.println("=====================================\n");
 						}else if (menu.equals("0")) {
 							break;
 						}else {

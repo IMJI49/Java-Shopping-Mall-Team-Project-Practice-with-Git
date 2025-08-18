@@ -44,8 +44,10 @@ public class MainController {
 			String menu = scanner.nextLine();
 			switch(menu) {
 				case "1":
+					//회원가입
 					break;
 				case "2":
+					System.out.println("\n===========   로그인   =============");
 					System.out.println("아이디를 입력해 주세요");
 					String id = scanner.nextLine();
 					System.out.println("패스워드를 입력해 주세요");
@@ -53,6 +55,8 @@ public class MainController {
 					// userRosi, managerrepo valid
 					// getrole if문
 					
+					System.out.println("로그인 되었습니다.");
+					System.out.println("====================================\n");
 					//로그인 할 때 아이디가 admin이면 관리자 모드로 로그인
 					if(id.equals("admin")) {
 						// 관리자 로그인 메뉴
@@ -116,6 +120,9 @@ public class MainController {
 									menu = scanner.nextLine();
 									if(menu.equals("1")) {
 										//내 정보 조회
+										System.out.println("\n========  내 정보 조회  ==========");
+										
+										System.out.println("===============================\n");
 									}else if (menu.equals("2")) {
 										System.out.println("\n======== 비밀번호 변경 ==========");
 										System.out.print("변경할 비밀번호를 입력해주세요: _");
@@ -197,9 +204,12 @@ public class MainController {
 										String name = scanner.nextLine();
 										
 										System.out.println("성공적으로 삭제되었습니다.");
-										System.out.println("==================================");
+										System.out.println("==================================\n");
 									}else if (menu.equals("4")) {
 										//재고 관리
+										System.out.println("\n=========   재고 관리   ============");
+										
+										System.out.println("===================================\n");
 									}else if (menu.equals("5")) {
 										System.out.println("\n=========   상품 목록 조회   ==========");
 								
@@ -293,7 +303,6 @@ public class MainController {
 									System.out.println("│  4. 베스트셀러                       │");
 									System.out.println("│  5. 신상품                          │");
 									System.out.println("│  6. 상품 상세보기                     │");
-									System.out.println("|  7. 상품 리뷰하기                     |");
 									System.out.println("│  0. 돌아가기                         │");
 									System.out.println("└────────────────────────────────────┘");
 									System.out.print("메뉴를 선택하세요: _");
@@ -363,21 +372,33 @@ public class MainController {
 									
 									menu = scanner.nextLine();
 									if(menu.equals("1")) {
+										System.out.println("\n=========== 장바구니 조회 ============");
 										
+										System.out.println("=====================================\n");
 									}else if (menu.equals("2")) {
+										System.out.println("\n=========  상품 추가 =============");
 										System.out.print("추가할 상품의 이름을 입력해주세요: _");
 										String name = scanner.nextLine();
+										
+										System.out.println("================================\n");
 									}else if (menu.equals("3")) {
+										System.out.println("\n===========  수량 변경  ===============");
 										System.out.print("변경할 수량을 입력해주세요: _");
 										String sAmount = scanner.nextLine();
 										int amount = Integer.parseInt(sAmount);
+										
+										System.out.println("=======================================\n");
 									}else if (menu.equals("4")) {
+										System.out.println("\n===========  상품 삭제  ===============");
 										System.out.print("삭제할 상품의 상품명을 입력해주세요: _");
 										String name = scanner.nextLine();
 										
 										System.out.println("성공적으로 삭제되었습니다!");
+										System.out.println("======================================\n");
 									}else if (menu.equals("5")) {
+										System.out.println("\n============  장바구니 비우기  =============");
 										
+										System.out.println("=========================================\n");
 									}else if (menu.equals("0")) {
 										break;
 									}else {
@@ -386,8 +407,13 @@ public class MainController {
 								}
 							}else if (menu.equals("4")) {
 								//주문하기
+								System.out.println("\n===============  주문하기 ================");
+								
+								System.out.println("==========================================\n");
 							}else if (menu.equals("5")) {
-								System.out.println("요청하신 주문 내역입니다.");
+								System.out.println("\n=============  주문내역  ===============");
+								
+								System.out.println("========================================\n");
 							}else if (menu.equals("6")) {
 								// 일반 사용자 마이페이지
 								while(true) {
@@ -434,7 +460,9 @@ public class MainController {
 										
 										System.out.println("======================================\n");
 									}else if (menu.equals("5")) {
+										System.out.println("\n=========  회원 탈퇴  ============");
 										
+										System.out.println("===================================\n");
 									}else if (menu.equals("0")) {
 										break;
 									}else {

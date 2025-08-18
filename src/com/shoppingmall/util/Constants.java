@@ -8,6 +8,7 @@ public class Constants {
 	public static final String USER_DATA_FILE = "users.dat";
 	public static final String PRODUCT_DATA_FILE = "product.dat";
 	public static final String MANAGER_DATA_FILE = "manager.dat";
+	public static final String ORDER_DATA_FILE = "order.dat";
 }
 
 	

@@ -37,7 +37,7 @@ public class UserRepository {
 
 			
 			// 사용자 조회 (ID로 검색)
-			public Object findById(String id) {
+			public Customer findById(String id) {
 				List<Customer> users = FileManagement.readFromFile(UserRepository.FILE_NAME);
 				return users.stream()
 						.filter(u -> u.getId().equals(id))
@@ -63,7 +63,7 @@ public class UserRepository {
 	
 	// 비밀번호 확인 (개인정보 수정 전 인증용)
     public boolean verifyPassword(String id, String password) {
-        Customer customer = (Customer) findById(id);
+        Customer customer = findById(id);
         return customer != null && customer.getPassword().equals(password);
     }
     
@@ -83,6 +83,23 @@ public class UserRepository {
             }
         }
         return false;
+    }
+    
+    // 사용자 삭제 메서드 추가
+    public boolean deleteById(String id) {
+		List<Customer> customers = FileManagement.readFromFile(FILE_NAME);
+		
+		for (int i=0; i< customers.size(); i++) {
+			if (customers.get(i).getId().equals(id)) {
+				customers.remove(i);
+				FileManagement.writeToFile(FILE_NAME, customers);
+				
+				return true; //삭제 성공
+			}
+		}
+    	
+    	return false; //id에 해당하는 고객을 찾지 못함
+    	
     }
     
 	

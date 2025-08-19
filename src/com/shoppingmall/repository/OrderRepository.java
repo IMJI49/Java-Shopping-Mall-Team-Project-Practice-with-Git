@@ -47,8 +47,8 @@ public class OrderRepository {
     public List<Order> findByStatus(Order.Status status) {
         List<Order> allOrders = FileManagement.readFromFile(FILE_NAME);
         return allOrders.stream()
-                .filter(order -> order.getStatus() == status)
-                .collect(Collectors.toList());
+		                .filter(order -> order.getStatus() == status)
+		                .collect(Collectors.toList());
     }
 	
 

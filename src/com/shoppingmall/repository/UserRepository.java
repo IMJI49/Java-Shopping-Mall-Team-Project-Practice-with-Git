@@ -3,7 +3,6 @@ package com.shoppingmall.repository;
 
 import java.util.List;
 
-
 import com.shoppingmall.models.Customer;
 import com.shoppingmall.persistence.FileManagement;
 import com.shoppingmall.util.Constants;
@@ -102,5 +101,6 @@ public class UserRepository {
     	
     }
     
+
 	
 }

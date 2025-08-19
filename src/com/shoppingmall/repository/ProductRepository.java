@@ -103,11 +103,26 @@ public class ProductRepository {
     
     
     
-    // 리뷰 작성 메서드 추가
-	public void addReview(String itemId, String customerId, int rating, String reviewText) {
-		// TODO Auto-generated method stub
-		
-	}
+    // 리뷰 작성 메서드 구현
+    public void addReview(String itemId, double rating, String reviewText) {
+        List<Item> items = FileManagement.readFromFile(FILE_NAME);
+
+        for (Item item : items) {
+            if (item.getItemID().equals(itemId)) {
+                // 평점 추가
+                item.addRating(rating);
+                // 리뷰 내용 추가
+                item.addReviewing(reviewText);
+
+                // 파일에 저장
+                FileManagement.writeToFile(FILE_NAME, items);
+                System.out.println("리뷰가 추가되었습니다.");
+                return;
+            }
+        }
+
+        System.out.println("해당 ID의 상품을 찾을 수 없습니다.");
+    }
 
     
 

@@ -45,18 +45,16 @@ public class UserService {
 	 * "바꾸실 수 있는 정보" - typying으로 받는 걸로 String으로 주소, 이메일, 전화 번호
 	 * 
 	 */
-	private Scanner scanner;
-	private HashMap<String, Item> items;
-	private HashMap<String, Customer> customers;
-	private HashMap<String, Manager> managers;
-	private HashMap<String, Order> orders;
-	private HashMap<String, ArrayList<CartItem>> carts;
-	private HashMap<ArrayList<String>, String> review; // ItemID, String Review
-	private LocalDateTime shippingDate; // 배송 완료 날짜
-	private String mallName;
+	protected HashMap<String, Item> items; // string : itemid 
+	protected HashMap<String, Customer> customers; // string : userid
+ 
+	protected HashMap<String, Order> orders; // orderid 
+	protected HashMap<String, ArrayList<CartItem>> carts; // string : userid
+	protected HashMap<ArrayList<String>, String> review; // ItemID, String Review
+	protected LocalDateTime shippingDate; // 배송 완료 날짜
+	protected String mallName;
 
 	public UserService(String mallName) {
-		scanner = new Scanner(System.in);
 		this.mallName = mallName;
 		items = new HashMap<String, Item>();
 		List<Item> itemList = FileManagement.readFromFile(ProductRepository.FILE_NAME);
@@ -68,7 +66,6 @@ public class UserService {
 		for (Customer customer : customerList) {
 			customers.put(customer.getId(), customer);
 		}
-		managers = new HashMap<String, Manager>();
 		orders = new HashMap<String, Order>();
 		List<Order> orderList = FileManagement.readFromFile(UserRepository.FILE_NAME);
 		for (Order order : orderList) {
@@ -83,21 +80,10 @@ public class UserService {
 		ArrayList<CartItem> items = carts.get(customerID);
 		ValidationUtils.requireNotNullCustomer(customer, customerID);
 		int sum = 0;
-
+		
 	}
 
-	public void confirmOrder(Status status, String orderID) throws ValidationException {
-		ValidationUtils.orderPendingCheck(status, "현재 상태에서는 주문 확정이 불가능합니다.");
-		status = Status.CONFIRM;
-		orders.get(orderID).setStatus(status);
-	}
-
-	public void startShipping(Status status, String orderID) throws ValidationException {
-		if (status != Status.CONFIRM)
-			throw new ValidationException("확정된 주문만 배송을 시작할 수 있습니다.");
-		status = Status.SHIPPING;
-		System.out.printf("📦 %s님 주문의 배송이 시작되었습니다. (주문번호 : %s)\n", customers.get(orderID).getName(), orderID);
-	}
+	
 
 	public void completeDelivery(Status status, String orderID) throws ValidationException {
 		if (status != Status.SHIPPING)
@@ -114,14 +100,7 @@ public class UserService {
 		System.err.printf("⚠ 주문 [%s]가 취소되었습니다./n", orderID);
 	}
 
-	// 3일 지난 배송 자동 완료
-	public void autoCompleteDeliveryIfOver3Days(Status status, String orderID) {
-		if (status == Status.SHIPPING && shippingDate != null
-				&& shippingDate.plusDays(3).isBefore(LocalDateTime.now())) {
-			status = Status.DELIVERED;
-			System.out.printf("📦 주문 [%s]은 발송 3일 경과로 자동 완료 처리되었습니다.\n", orderID);
-		}
-	}
+	
 
 	// 리뷰 안내 (배송 완료 후 1회만)
 	public void promptReview(Status status, String orderID) {
@@ -318,42 +297,11 @@ public class UserService {
 		System.out.println("리뷰가 성공적으로 작성되었습니다");
 	}
 
-	public String getName() {
+	public String getMallName() {
 		return mallName;
-
 	}
 
-	public Scanner getScanner() {
-		return scanner;
-	}
 
-	public HashMap<String, Item> getItems() {
-		return items;
-	}
-
-	public HashMap<String, Customer> getCustomers() {
-		return customers;
-	}
-
-	public HashMap<String, Manager> getManagers() {
-		return managers;
-	}
-
-	public HashMap<String, Order> getOrders() {
-		return orders;
-	}
-
-	public HashMap<String, ArrayList<CartItem>> getCarts() {
-		return carts;
-	}
-
-	public HashMap<ArrayList<String>, String> getReview() {
-		return review;
-	}
-
-	public LocalDateTime getShippingDate() {
-		return shippingDate;
-	}
 
 	// 상세 정보 보기
 }

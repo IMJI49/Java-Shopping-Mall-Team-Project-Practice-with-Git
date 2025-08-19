@@ -1,5 +1,6 @@
 package com.shoppingmall.models;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Customer extends Person {
@@ -11,6 +12,7 @@ public class Customer extends Person {
 	private String review;
 	private int point;
 	private boolean[] coupons;
+	private ArrayList<String> orderIDs;
 
 	public Customer(String id, String password, String name, String address, String email, String phoneNumber) {
 		super(id, password, name, address, email, phoneNumber);
@@ -18,7 +20,7 @@ public class Customer extends Person {
 		coupons = new boolean[3];
 		Arrays.fill(coupons, true);
 		getRole();
-
+		orderIDs = new ArrayList<>();
 	}
 	public boolean couponUse(String type) {
 		switch (type) {
@@ -44,6 +46,17 @@ public class Customer extends Person {
 		return point;
 	}
 
+	public ArrayList<String> getOrderIDs() {
+		return orderIDs;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj) || (obj.getClass() == Customer.class && ((Person) obj).getId() == id);
+			
+	}
+	public void addOrderID(String orderID) {
+		orderIDs.add(orderID);
+	}
 	public double getRating() {
 		return rating;
 	}
@@ -67,7 +80,7 @@ public class Customer extends Person {
 
 	@Override
 	public String toString() {
-		return String.format("이름 : %s, id %s, 주소 : %s, 전화번호 : %s", name, id, address, phoneNumber);
+		return String.format("이름 : %s, id : %s, 주소 : %s, 전화번호 : %s", name, id, address, phoneNumber);
 	}
 
 }

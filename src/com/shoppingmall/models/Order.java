@@ -2,7 +2,6 @@ package com.shoppingmall.models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class Order {
@@ -15,13 +14,13 @@ public class Order {
     private LocalDateTime orderDate;
 
     private Status status;
-    private List<CartItem> cartItems;
+    private ArrayList<CartItem> cartItems;
     private long totalAmount;
     private String shippingAddress;
     // 리뷰 관련
     private boolean reviewPromptShown; // 리뷰 창 한 번만 뜨게
 
-    public Order(Customer customer, List<CartItem> cartItems) {
+    public Order(Customer customer, ArrayList<CartItem> cartItems) {
     	this.orderID = "O" + String.format("%08d", orderSeq++);
         this.customer = customer;
         this.orderDate = LocalDateTime.now();
@@ -33,7 +32,7 @@ public class Order {
 	}
 
 	// 생성자
-    public Order(Customer customer, List<CartItem> cartItems, String shippingAddress) {
+    public Order(Customer customer, ArrayList<CartItem> cartItems, String shippingAddress) {
         this.orderID = "O" + String.format("%08d", orderSeq++);
         this.customer = customer;
         this.orderDate = LocalDateTime.now();
@@ -89,6 +88,6 @@ public class Order {
     public Customer getCustomer() { return customer; }
     public LocalDateTime getOrderDate() { return orderDate; }
     public Status getStatus() { return status; }
-    public List<CartItem> getCartItems() { return cartItems; }
+    public ArrayList<CartItem> getCartItems() { return cartItems; }
     public long getTotalAmount() { return totalAmount; }
 }

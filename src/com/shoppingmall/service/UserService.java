@@ -2,12 +2,8 @@ package com.shoppingmall.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
@@ -127,7 +123,7 @@ public class UserService {
 		}
 	}
 	// 카테고리로 상품 검색
-	public Object findByCategory(String category) {
+	public List<Item> findByCategory(String category) {
 		List<Item> items = FileManagement.readFromFile(ProductRepository.FILE_NAME);
 
 		List<Item> foundItems = items.stream().filter(u -> u.getCategory().equals(category)).toList();
@@ -142,7 +138,7 @@ public class UserService {
 	}
 
 	// 상품명으로 상품 검색
-	public Object findByName(String name) {
+	public List<Item> findByName(String name) {
 		List<Item> items = FileManagement.readFromFile(ProductRepository.FILE_NAME);
 
 		List<Item> foundItems = items.stream().filter(u -> u.getName().equals(name)).toList();
@@ -157,21 +153,44 @@ public class UserService {
 
 	}
 
-	// (1. 1만원 미만, 2. 1-5만원, 3. 5-10만원,4. 10만원 이상)
+	// (1. 1만원 미만, 2. 1-5만원, 3. 5-10만원, 4. 10만원 이상)
 	// 가격대로 상품 검색
-	public Object findByPriceRange(int minPrice, int maxPrice) {
+	public void findByPriceRange(int option) throws ValidationException {
 		List<Item> items = FileManagement.readFromFile(ProductRepository.FILE_NAME);
-		List<Item> foundItems = items.stream().filter(i -> i.getPrice() >= minPrice && i.getPrice() <= maxPrice)
-				.toList();
 
-		if (foundItems.isEmpty()) {
-			return null;
+		int minPrice = 0;
+		int maxPrice =  Integer.MAX_VALUE;
+		
+		switch (option) {
+			case 1: {
+				minPrice = 0;
+				maxPrice = 9999;
+				break;
+			}
+			case 2: {
+				minPrice = 10000;
+				maxPrice = 49999;
+				break;
+			}
+			case 3: {
+				minPrice = 50000;
+				maxPrice = 99999;
+				break;
+			}
+			case 4: {
+				minPrice = 100000;
+				maxPrice = Integer.MAX_VALUE;
+				break;
+			}
+			default:
+				 throw new ValidationException("잘못된 옵션입니다: " + option);
+			}
+		
+		for (Item item : items) {
+			if(item.getPrice() >= minPrice && item.getPrice() <= maxPrice) {
+				System.out.println(item);
+			}
 		}
-
-		foundItems.forEach(System.out::println);
-
-		return foundItems;
-
 	}
 
 	// Item 리뷰 추가
@@ -200,34 +219,46 @@ public class UserService {
 		System.out.println("리뷰가 성공적으로 추가되었습니다");
 	}
 
-	// 한 상품 상세보기 제품 이름, 가격, 설명, 판매 횟수,리뷰평점, 리뷰들
+	// 한 상품 상세보기 : 제품 이름, 가격, 설명, 판매 횟수, 리뷰평점, 리뷰들
 	public void showItemDetails(String itemname) {
-		Item item = getItembyName(itemname);
-		ValidationUtils.requireNotNullItem(item, "이 상품은 없습니다.");
-		String desc = item.toString() + String.format("상품 설명 : %s, 판매 횟수 : %d, 리뷰평점 : %.1f", item.getDescription(),item.getSellCount(),item.averageReviewRating());
-		// 추가적으로 리뷰점수 + 리뷰들
-		if (item != null) {
-			System.out.println("=== " + item.getName() + "의 전체 리뷰 요약 ===");
-			System.out.println("평균 평점: " + String.format("%.1f", item.averageReviewRating()));
-			System.out.println("총 리뷰 개수: " + item.getReview().size());
+		try {
+			Item item = getItembyName(itemname);
+			ValidationUtils.requireNotNullItem(item, "해당 이름의 상품을 찾을 수 없습니다");
+			System.out.println(item.toString() + String.format("상품 설명 : %s, 판매 횟수 : %d, 리뷰평점 : %.1f", item.getDescription(),item.getSellCount(),item.averageReviewRating()));
 
-			if (!item.getReview().isEmpty()) {
-				System.out.println("\n리뷰 목록:");
-				for (int i = 0; i < item.getReview().size(); i++) {
-					System.out.println(
-							(i + 1) + ". 평점: " + item.getRating().get(i) + "/5 | 리뷰: " + item.getReview().get(i)
-									+ " | 작성자: " + item.getReviewerIds().get(i).substring(0, 3) + "****");
-					// 개인정보 노출 위험 최소화를 위해 아이디 앞 3자리만 공개 + ****로 항상 표시
+			// 추가적으로 리뷰점수 + 리뷰들
+				System.out.println("=== " + item.getName() + "의 전체 리뷰 요약 ===");
+				System.out.println("평균 평점: " + String.format("%.1f", item.averageReviewRating()));
+				System.out.println("총 리뷰 개수: " + item.getReview().size());
+
+				if (!item.getReview().isEmpty()) {
+					
+					System.out.println("\n리뷰 목록:");
+					
+					int i = 1;
+					
+					for (String review : item.getReview()) {
+						System.out.println(
+								(i) + ". 평점: " + item.getRating().get(i-1) + "/5 | 리뷰: " + review
+									+ " | 작성자: ****");
+						// 개인정보 노출 위험 최소화를 위해 작성자 비공개 + ****로 항상 표시
+					}
+				} else {
+					System.out.println("아직 리뷰가 없습니다.");
 				}
-			} else {
-				System.out.println("아직 리뷰가 없습니다.");
-			}
-			System.out.println("================================");
-		} else {
-			System.out.println("해당 ID의 상품을 찾을 수 없습니다: " + itemId);
+				System.out.println("================================");
+			
+		} catch (ProductNotFoundException e) {
+			System.out.println(e.getMessage());
+			return;
 		}
 	}
 
+	
+
+
+
+	
 	// 모든 사용자 데이터 반환 (비밀번호 제외)
 	public List<Customer> getAllCustomers() {
 		List<Customer> customers = FileManagement.readFromFile(UserRepository.FILE_NAME);
@@ -272,6 +303,21 @@ public class UserService {
 		return false;
 	}
 
+	// 이메일 수정
+	public boolean updateEmail(String id, String currentPassword, String newEmail) throws ValidationException {
+		ValidationUtils.correctIDPassword(id, currentPassword, customers.get(id));
+		List<Customer> customers = FileManagement.readFromFile(UserRepository.FILE_NAME);
+
+		for (Customer customer : customers) {
+			if (customer.getId().equals(id)) {
+				customer.setEmail(newEmail);
+				FileManagement.writeToFile(UserRepository.FILE_NAME, customers);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// 비밀번호 변경
 	public boolean changePassword(String id, String currentPassword, String newPassword) throws ValidationException {
 		ValidationUtils.correctIDPassword(id, currentPassword, customers.get(id));
@@ -303,5 +349,5 @@ public class UserService {
 
 
 
-	// 상세 정보 보기
+
 }

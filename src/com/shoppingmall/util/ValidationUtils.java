@@ -68,9 +68,11 @@ public class ValidationUtils {
 			throw new ValidationException("아이디 혹은 비밀번호가 일치하지 안습니다.");
 		}
 	}
-	public static void orderPendingCheck(Status status, String string) {
-		
-	}
+	public static void orderPendingCheck(Status status, String message) throws ValidationException {
+	    if (status != Status.PENDING) {
+	        throw new ValidationException(message);
+			}
+		}
+}		
 	
-	
-}
+

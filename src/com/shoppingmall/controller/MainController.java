@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import com.shoppingmall.models.CartItem;
+import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;
+import com.shoppingmall.models.Manager;
 import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.repository.UserRepository;
 import com.shoppingmall.service.ManagerService;
@@ -20,7 +23,7 @@ public class MainController {
 	
 	public MainController() {
 		this.scanner = new Scanner(System.in);
-		managerService = new ManagerService();
+		managerService = new ManagerService("Java Shopping Mall");
 		userService = new UserService("Java Shopping Mall");
 		productRepository = new ProductRepository();
 	}
@@ -31,10 +34,12 @@ public class MainController {
 	
 	//메인메뉴
 	private void showMainMenu() {
+		Customer customer = null;
+		Manager manager = null;
 		while(true) {
 			// 메인메뉴
 			System.out.println("╔════════════════════════════════════════════╗");
-			System.out.println("║     🛍️  "+userService.getName()+"                 ║");
+			System.out.println("║     🛍️  "+userService.getMallName()+"                 ║");
 			System.out.println("╚════════════════════════════════════════════╝");
 			System.out.println("1.  회원가입");
 			System.out.println("2. 로그인");
@@ -63,7 +68,7 @@ public class MainController {
 						// 관리자 로그인 메뉴
 						while(true) {
 							System.out.println("╔════════════════════════════════════════════╗");
-							System.out.println("║     🛍️  "+userService.getName()+"                 ║");
+							System.out.println("║     🛍️  "+managerService.getMallName()+"                 ║");
 							System.out.println("║      [관리자 모드] 환영합니다!                   ║");
 							System.out.println("╚════════════════════════════════════════════╝");
 							System.out.println("1. 주문 관리");
@@ -381,8 +386,7 @@ public class MainController {
 										} else {
 											System.out.println("[장바구니 현재 목록]");
 											for(CartItem ci : cartItems) {
-												System.out.printf("- %s | 가격: %,d | 수량: %d | 합계: %,d원\n",
-													ci.getItem().getName(), ci.getItem().getPrice(), ci.getQuantity(), ci.getTotalPrice());
+												System.out.println(ci);
 											}
 										}
 										System.out.println("=====================================\n");
@@ -390,7 +394,7 @@ public class MainController {
 										System.out.println("\n=========  상품 추가 =============");
 										System.out.print("추가할 상품의 이름을 입력해주세요: _");
 										String name = scanner.nextLine();
-										Item item = userService.getItembyName(itemName);
+										Item item = userService.getItembyName(name);
 										if(item == null) {
 											System.out.println("존재하지 않는 상품입니다.");
 											continue;

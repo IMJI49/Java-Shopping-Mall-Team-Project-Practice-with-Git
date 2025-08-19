@@ -16,6 +16,10 @@ public class Manager extends Person {
 	public String getRole() {
 		return "관리자";
 	}
+	@Override
+	public String toString() {
+		return String.format("이름 : %s, id : %s, 주소 : %s, 전화번호 : %s", name, id, address, phoneNumber);
+	}
 
 }
 

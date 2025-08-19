@@ -45,4 +45,12 @@ public class CartItem {
     // Getter
     public Item getItem() { return item; }
     public int getQuantity() { return quantity; }
+
+	@Override
+	public String toString() {
+		return String.format("- %s | 가격: %,d | 수량: %d | 합계: %,d원\n",
+				getItem().getName(), getItem().getPrice(),getQuantity(), getTotalPrice());
+			
+	}
+    
 }

@@ -129,7 +129,7 @@ public class MainController {
 									System.out.println("상품 명을 입력해 주세요");
 									String category = scanner.nextLine();
 									System.out.println("상품 명을 입력해 주세요");
-									String sPrice = scanner.nextLine();
+									String sPrice = scanner.nextLine().trim().replaceAll(",. ", "");
 									int price = Integer.parseInt(sPrice);
 									System.out.println("상품 명을 입력해 주세요");
 									String sQuantity = scanner.nextLine();

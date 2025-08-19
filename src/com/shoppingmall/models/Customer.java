@@ -37,9 +37,7 @@ public class Customer extends Person {
 		}
 	}
 	public void addPoint(Order order) {
-		if (order.getStatus() == Order.Status.DELIVERED && order.getCustomer().getId() == getId()) {
-			point += (int) (order.getTotalAmount() * 0.05);
-		}
+		point += (int) (order.getTotalAmount() * 0.05);
 	}
 
 	public int getPoint() {

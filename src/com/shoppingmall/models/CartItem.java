@@ -10,13 +10,14 @@ public class CartItem {
 
     private final Item item; // setItem 제거, 변경 불가능
     private int quantity;    // setQuantity 제거
-
+    private long totalPrice;
     public CartItem(Item item, int quantity) throws ShoppingMallException {
     	ValidationUtils.requireNotNullItem(item, "상품이 존재하지 않습니다.");
     	ValidationUtils.requireMinQuantity(quantity, "잘못된 수량입니다.");
     	ValidationUtils.requireSufficientStock(item, quantity, "수량이 부족합니다.");
         this.item = item;
         this.quantity = quantity;
+        totalPrice = getTotalPrice();
     }
 
     // 수량 감소 (1 미만이면 예외)
@@ -36,9 +37,11 @@ public class CartItem {
 
     // 오버플로 방지
     public long getTotalPrice() {
-        return Math.multiplyExact((long) item.getPrice(), (long) quantity);
+        return (long) item.getPrice() * (long) quantity;
     }
-
+    public long discountPrice(double rate) {
+    	return totalPrice *= (1-rate);
+    }
     // Getter
     public Item getItem() { return item; }
     public int getQuantity() { return quantity; }

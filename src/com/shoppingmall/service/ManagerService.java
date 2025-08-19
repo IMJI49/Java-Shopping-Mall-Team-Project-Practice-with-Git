@@ -3,7 +3,6 @@ package com.shoppingmall.service;
 import java.util.Scanner;
 
 import com.shoppingmall.models.Manager;
-import com.shoppingmall.models.Order;
 
 public class ManagerService {
 	/*
@@ -34,6 +33,7 @@ public class ManagerService {
 	 */
 	private Scanner scanner;
 	private Manager manager;
+
 	private UserService userService;
 
 	public ManagerService(UserService userService) {
@@ -117,6 +117,7 @@ public class ManagerService {
 
 
 	
+
 }
 
 	

@@ -1,11 +1,14 @@
 package com.shoppingmall.controller;
 
 import java.util.ArrayList;
+
+import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
-import com.shoppingmall.models.CartItem;
 import com.shoppingmall.models.Item;
 import com.shoppingmall.repository.ProductRepository;
+import com.shoppingmall.repository.UserRepository;
 import com.shoppingmall.service.ManagerService;
 import com.shoppingmall.service.UserService;
 
@@ -373,6 +376,7 @@ public class MainController {
 										System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 									}
 								
+
 								// 일반 사용자 마이페이지
 								while(true) {
 									System.out.println("┌────────────────────────────────────┐");

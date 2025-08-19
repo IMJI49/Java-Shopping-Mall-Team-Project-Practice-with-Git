@@ -1,6 +1,7 @@
 package com.shoppingmall.controller;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -372,21 +373,75 @@ public class MainController {
 									
 									menu = scanner.nextLine();
 									if(menu.equals("1")) {
+
 										System.out.println("\n=========== 장바구니 조회 ============");
-										
+										ArrayList<CartItem> cartItems = userService.getCarts().get(id);
+										if(cartItems == null || cartItems.isEmpty()) {
+											System.out.println("장바구니가 비어 있습니다.");
+										} else {
+											System.out.println("[장바구니 현재 목록]");
+											for(CartItem ci : cartItems) {
+												System.out.printf("- %s | 가격: %,d | 수량: %d | 합계: %,d원\n",
+													ci.getItem().getName(), ci.getItem().getPrice(), ci.getQuantity(), ci.getTotalPrice());
+											}
+										}
 										System.out.println("=====================================\n");
 									}else if (menu.equals("2")) {
 										System.out.println("\n=========  상품 추가 =============");
 										System.out.print("추가할 상품의 이름을 입력해주세요: _");
 										String name = scanner.nextLine();
-										
+										Item item = userService.getItembyName(itemName);
+										if(item == null) {
+											System.out.println("존재하지 않는 상품입니다.");
+											continue;
+                      }
+										System.out.print("추가 수량을 입력하세요: ");
+										int qty;
+										try {
+											qty = Integer.parseInt(scanner.nextLine());
+										} catch(Exception e) {
+											System.out.println("올바른 수량을 입력해주세요."); continue;
+										}
+										try {
+											userService.getCarts().putIfAbsent(id, new ArrayList<CartItem>());
+											userService.getCarts().get(id).add(new CartItem(item, qty));
+											System.out.println("장바구니에 상품이 추가되었습니다.");
+										} catch(Exception e) {
+											System.out.println("추가 실패: " + e.getMessage());
+										}
 										System.out.println("================================\n");
 									}else if (menu.equals("3")) {
 										System.out.println("\n===========  수량 변경  ===============");
 										System.out.print("변경할 수량을 입력해주세요: _");
 										String sAmount = scanner.nextLine();
 										int amount = Integer.parseInt(sAmount);
-										
+										ArrayList<CartItem> cartItems = userService.getCarts().get(id);
+										if(cartItems == null || cartItems.isEmpty()) {
+											System.out.println("장바구니가 비어 있습니다."); continue;
+										}
+										System.out.print("수량을 변경할 상품 이름: ");
+										String targetName = scanner.nextLine();
+										boolean found = false;
+										for(CartItem ci : cartItems) {
+											if(ci.getItem().getName().equals(targetName)) {
+												System.out.print("새 수량을 입력하세요: ");
+												int newQty;
+												try {
+													newQty = Integer.parseInt(scanner.nextLine());
+													if(newQty <= 0) {
+														System.out.println("수량은 1 이상이어야 합니다."); break;
+													}
+													// 수량 변경(간단 예시: 기존 객체 대체)
+												 cartItems.remove(ci);
+												 cartItems.add(new CartItem(ci.getItem(), newQty));
+												 System.out.println("수량이 변경되었습니다.");
+												} catch(Exception e) {
+													System.out.println("변경 실패: " + e.getMessage());
+												}
+												found = true; break;
+											}
+										}
+										if(!found) System.out.println("장바구니에 해당 상품이 없습니다.");
 										System.out.println("=======================================\n");
 									}else if (menu.equals("4")) {
 										System.out.println("\n===========  상품 삭제  ===============");
@@ -397,13 +452,31 @@ public class MainController {
 										System.out.println("======================================\n");
 									}else if (menu.equals("5")) {
 										System.out.println("\n============  장바구니 비우기  =============");
+										ArrayList<CartItem> cartItems = userService.getCarts().get(id);
+										if(cartItems == null || cartItems.isEmpty()) {
+											System.out.println("장바구니가 비어 있습니다."); continue;
+										}
+										System.out.print("삭제할 상품 이름: ");
+										String delName = scanner.nextLine();
+										boolean removed = cartItems.removeIf(ci -> ci.getItem().getName().equals(delName));
+										if(removed) {
+											System.out.println("장바구니에서 상품이 삭제되었습니다.");
+										} else {
+											System.out.println("장바구니에 해당 상품이 없습니다.");
+										}
 										
+									} else if(menu.equals("5")) {
+										ArrayList<CartItem> cartItems = userService.getCarts().get(customerId);
+										if(cartItems != null) cartItems.clear();
+										System.out.println("장바구니가 비워졌습니다.");
 										System.out.println("=========================================\n");
 									}else if (menu.equals("0")) {
+
 										break;
-									}else {
+									} else {
 										System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 									}
+
 								}
 							}else if (menu.equals("4")) {
 								//주문하기
@@ -415,6 +488,7 @@ public class MainController {
 								
 								System.out.println("========================================\n");
 							}else if (menu.equals("6")) {
+
 								// 일반 사용자 마이페이지
 								while(true) {
 									System.out.println("┌────────────────────────────────────┐");

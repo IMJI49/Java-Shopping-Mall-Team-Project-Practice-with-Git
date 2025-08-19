@@ -33,10 +33,91 @@ public class ManagerService {
 	 */
 	private Scanner scanner;
 	private Manager manager;
-	public ManagerService() {
+
+	private UserService userService;
+
+	public ManagerService(UserService userService) {
+		this.userService = userService;
 		scanner = new Scanner(System.in);
 	}
 	
+	// 1. 주문 내역 확인
+	public void showAllOrders() {
+		System.out.println("=== 전체 주문 내역 ===");
+		for (Order order : userService.getOrders().values()) {
+			System.out.printf("주문번호: %s | 고객: %s | 상태: %s | 총액: %,d원\n", 
+				order.getOrderID(), order.getCustomer().getName(), order.getStatus(), order.getTotalAmount());
+		}
+	}
+
+	// 2. 주문 확정 (펜딩 -> 확정)
+	public void confirmOrder(String orderId) {
+		Order order = userService.getOrders().get(orderId);
+		if (order == null) {
+			System.out.println("존재하지 않는 주문번호입니다."); return;
+		}
+		try {
+			userService.confirmOrder(order.getStatus(), orderId); // 기존 UserService 동작 재사용
+			System.out.println("주문이 확정되었습니다.");
+		} catch(Exception e) {
+			System.out.println("실패: "+e.getMessage());
+		}
+	}
+
+	// 3. 주문 취소
+	public void cancelOrder(String orderId) {
+		Order order = userService.getOrders().get(orderId);
+		if (order == null) {
+			System.out.println("존재하지 않는 주문번호입니다."); return;
+		}
+		try {
+			userService.cancelOrder(order.getStatus(), orderId);
+			System.out.println("주문이 취소되었습니다.");
+		} catch(Exception e) {
+			System.out.println("실패: "+e.getMessage());
+		}
+	}
+
+	// 4. 배송 시작
+	public void startShipping(String orderId) {
+		Order order = userService.getOrders().get(orderId);
+		if (order == null) {
+			System.out.println("존재하지 않는 주문번호입니다."); return;
+		}
+		try {
+			userService.startShipping(order.getStatus(), orderId);
+			System.out.println("주문 배송을 시작합니다.");
+		} catch(Exception e) {
+			System.out.println("실패: "+e.getMessage());
+		}
+	}
+
+	// 5. 배송 완료
+	public void completeDelivery(String orderId) {
+		Order order = userService.getOrders().get(orderId);
+		if (order == null) {
+			System.out.println("존재하지 않는 주문번호입니다."); return;
+		}
+		try {
+			userService.completeDelivery(order.getStatus(), orderId);
+			System.out.println("배송이 완료되었습니다.");
+		} catch(Exception e) {
+			System.out.println("실패: "+e.getMessage());
+		}
+	}
+
+	public void adminPlaceOrder(String customerId) {
+		try {
+			userService.placeOrder(customerId);
+			System.out.println("관리자에 의해 주문이 접수되었습니다.");
+		} catch(Exception e) {
+			System.out.println("실패: "+e.getMessage());
+		}
+	}
+
+
+	
+
 }
 
 	

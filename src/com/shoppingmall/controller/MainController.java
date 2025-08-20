@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import com.shoppingmall.exception.ShoppingMallException;
+import com.shoppingmall.exception.ValidationException;
 import com.shoppingmall.models.CartItem;
 import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;
@@ -328,7 +329,7 @@ public class MainController {
 		}
 	}
 
-	private void lookAroundGoods() {
+	private void lookAroundGoods() throws ValidationException {
 		String menu;
 		do {
 			/*
@@ -352,7 +353,7 @@ public class MainController {
 			switch(menu) {
 				case "1":
 					System.out.println("\n======= 전체 상품 보기 ==========");
-					
+					userService.getAllItems();
 					System.out.println("================================\n");
 					break;
 				case "2":
@@ -360,7 +361,7 @@ public class MainController {
 					System.out.println("\n======= 카테고리별 보기 ========");
 					System.out.print("카테고리를 입력해 주세요");
 					String category = scanner.nextLine();
-					
+					userService.findByCategory(category);
 					System.out.println("================================\n");
 					break;
 				case "3":
@@ -369,7 +370,7 @@ public class MainController {
 					System.out.print("번호를 선택해 주세요.(1. 3만원 미만, 2. 3-10만원, 3. 10-50만원,4. 50만원 이상)");
 					int number = scanner.nextInt();
 					scanner.nextLine();
-					
+					userService.findByPriceRange(number);
 					System.out.println("=================================\n");
 					break;
 				case "4":
@@ -381,7 +382,7 @@ public class MainController {
 				case "5":
 					// 신상품은 등록 3일 이내 제품
 					System.out.println("\n======== 신상품 보기 ============");
-					
+					userService.findNewItem();
 					System.out.println("================================\n");
 					break;
 				case "6":
@@ -390,7 +391,6 @@ public class MainController {
 					System.out.print("상품 이름을 입력해 주세요");
 					String itemname = scanner.nextLine();
 					userService.showItemDetails(itemname);
-					
 					System.out.println("=====================================\n");
 					break;
 				case "0":

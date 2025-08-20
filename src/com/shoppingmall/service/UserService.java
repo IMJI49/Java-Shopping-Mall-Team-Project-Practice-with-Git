@@ -1,6 +1,7 @@
 package com.shoppingmall.service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -170,6 +171,13 @@ public class UserService {
 			}
 		}
 	}
+	public void findNewItem() {
+		for (Item item : items.values()) {
+			if (ChronoUnit.DAYS.between(LocalDateTime.now(), item.getRegidate()) < 3) {
+				System.out.println(item);
+			}
+		}
+	}
 	// 카테고리로 상품 검색
 	public List<Item> findByCategory(String category) {
 		List<Item> foundItems = items.values().stream().filter(u -> u.getCategory().toLowerCase().contains(category.toLowerCase())).toList();
@@ -181,7 +189,7 @@ public class UserService {
 
 		return foundItems;
 	}
-
+	
 	// 상품명으로 상품 검색
 	public List<Item> findByName(String name) {
 		List<Item> foundItems = items.values().stream().filter(u -> u.getName().toLowerCase().contains(name.toLowerCase())).toList();
@@ -276,11 +284,12 @@ public class UserService {
 		}
 	}
 
-	
+	public void getAllItems(){
+		for (Item item : items.values()) {
+			System.out.println(item);
+		}
+	}
 
-
-
-	
 	// 모든 사용자 데이터 반환 (비밀번호 제외)
 	public List<Customer> getAllCustomers() {
 		List<Customer> customers = FileManagement.readFromFile(UserRepository.FILE_NAME);

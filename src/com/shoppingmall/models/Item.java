@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import com.shoppingmall.exception.InsufficientStockException;
+import com.shoppingmall.exception.ValidationException;
+import com.shoppingmall.util.ValidationUtils;
+
 public class Item implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -85,17 +89,26 @@ public class Item implements Serializable {
 		return description;
 	}
 
-	public boolean productStock(int quantity) {
+	public boolean productPlusStock(int quantity) throws ValidationException {
+		ValidationUtils.maxStock(this, quantity);
 		this.quantity += quantity;
 		return true;
 	}
-
+	public boolean productMinusStock(int quantity) throws InsufficientStockException {
+		ValidationUtils.requireSufficientStock(this, quantity);
+		this.quantity -= quantity;
+		return true;
+	}
 	public void setPrice(int price) {
 		this.price = price;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 
 	public int discount(double offRate) {

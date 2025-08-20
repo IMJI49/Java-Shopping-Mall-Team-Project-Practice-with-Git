@@ -14,7 +14,7 @@ public class CartItem {
     public CartItem(Item item, int quantity) throws ShoppingMallException {
     	ValidationUtils.requireNotNullItem(item, "상품이 존재하지 않습니다.");
     	ValidationUtils.requireMinQuantity(quantity, "잘못된 수량입니다.");
-    	ValidationUtils.requireSufficientStock(item, quantity, "수량이 부족합니다.");
+    	ValidationUtils.requireSufficientStock(item, quantity);
         this.item = item;
         this.quantity = quantity;
         totalPrice = getTotalPrice();
@@ -31,7 +31,7 @@ public class CartItem {
     // 수량 증가 (재고 초과 시 예외)
     public void addQuantity(int amount) throws InsufficientStockException {
         if (amount <= 0) return;
-        ValidationUtils.requireSufficientStock(item, quantity, "수량이 부족합니다.");
+        ValidationUtils.requireSufficientStock(item, quantity);
         this.quantity += amount;
     }
 

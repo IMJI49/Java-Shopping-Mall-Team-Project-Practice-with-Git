@@ -171,13 +171,6 @@ public class MainController_hhe {
 				    }
 				    //로그인 실패
 				    break;
-				    
-				    
-				    
-				    
-				    
-				    
-				    
 					if(id.equals("admin")) {
 						// 관리자 로그인 메뉴
 						while(true) {

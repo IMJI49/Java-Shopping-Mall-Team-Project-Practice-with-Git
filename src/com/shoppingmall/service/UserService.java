@@ -290,7 +290,9 @@ public class UserService {
 		}
 	}
 
-
+	public void changePassword(Customer customer,String newpassword) {
+		customers.get(customer.getId()).setPassword(newpassword);
+	}
 	
 	// 모든 사용자 데이터 반환    -- toString에 비밀번호가 포함되어있지 않으므로, 비밀번호 *로 바꾸는 코드는 주석처리함
 

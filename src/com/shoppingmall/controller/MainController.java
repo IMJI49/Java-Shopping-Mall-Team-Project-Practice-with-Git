@@ -2,6 +2,7 @@ package com.shoppingmall.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 import com.shoppingmall.exception.ShoppingMallException;
@@ -11,7 +12,9 @@ import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;
 import com.shoppingmall.models.Manager;
 import com.shoppingmall.models.Order;
+import com.shoppingmall.models.Person;
 import com.shoppingmall.persistence.FileManagement;
+import com.shoppingmall.repository.PersonRepository;
 import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.service.ManagerService;
 import com.shoppingmall.service.UserService;
@@ -24,12 +27,14 @@ public class MainController {
 	private ManagerService managerService;
 	private UserService userService;
 	private ProductRepository productRepository;
+	private PersonRepository personRepository;
 	
 	public MainController() {
 		this.scanner = new Scanner(System.in);
 		managerService = new ManagerService("Java Shopping Mall");
 		userService = new UserService("Java Shopping Mall");
 		productRepository = new ProductRepository();
+		personRepository = new PersonRepository();
 	}
 
 	public void start() throws ShoppingMallException {
@@ -55,21 +60,112 @@ public class MainController {
 			switch(menu) {
 				case "1":
 					//회원가입
+					try {
+						System.out.println("╔════════════════════════════════════════════╗");
+						System.out.println("║     🛍️  "+userService.getMallName()+"회원가입          ║");
+						System.out.println("╚════════════════════════════════════════════╝");
+						System.out.println("\n[ 회원 정보를 입력해 주세요 ]\n────────────────────────────\n");
+						System.out.print("▶ ID (5-20자, 영문/숫자 조합, 중복 불가) : ");
+						String memberId = scanner.nextLine().trim();
+
+						System.out.print("▶ 비밀번호 (8-20자, 영문/숫자 포함) : ");
+						String memberPassword = scanner.nextLine().trim();
+
+						System.out.print("▶ 이름 (2-20자, 한글/영문): ");
+						String memberName = scanner.nextLine().trim();
+
+						System.out.print("▶ 이메일 (이메일 형식, 중복 불가): ");
+						String memberEmail = scanner.nextLine().trim();
+
+						System.out.print("▶ 전화번호(010-XXXX-XXXX 형식): ");
+						String memberPhone = scanner.nextLine().trim();
+
+						System.out.print("▶ 주소 (50자 이내) : ");
+						String memberAddress = scanner.nextLine().trim();
+
+				        // 1. ID 검증
+				        ValidationUtils.requireNotNullAndEmpty(memberId, "아이디를 입력해 주세요.");
+				        ValidationUtils.requireMinLength(memberId, 5, "❌ 아이디는 최소 5자 이상이어야 합니다.");
+				        ValidationUtils.requireMaxLength(memberId, 20, "❌ 아이디는 최대 20자 이하여야 합니다.");
+				        if (!memberId.matches("^[a-zA-Z0-9]+$")) {
+				            throw new ValidationException("❌ 아이디는 영문과 숫자만 사용 가능합니다.");
+				        }
+				        
+				        // 2. 비밀번호 검증
+				        ValidationUtils.requireNotNullAndEmpty(memberPassword, "비밀번호를 입력해 주세요.");
+				        ValidationUtils.requireMinLength(memberPassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
+				        ValidationUtils.requireMaxLength(memberPassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
+				        if (!memberPassword.matches(".*[a-zA-Z].*") || !memberPassword.matches(".*[0-9].*")) {
+				            throw new ValidationException("비밀번호는 영문과 숫자를 모두 포함해야 합니다.");
+				        }
+				        
+				        // 3. 이름 검증
+				        ValidationUtils.requireNotNullAndEmpty(memberName, "이름을 입력해 주세요.");
+				        ValidationUtils.requireMinLength(memberName, 2, "이름은 최소 2자 이상이어야 합니다.");
+				        ValidationUtils.requireMaxLength(memberName, 20, "이름은 최대 20자 이하여야 합니다.");
+				        if (!memberName.matches("^[가-힣a-zA-Z]+$")) {
+				            throw new ValidationException("이름은 한글 또는 영문만 사용 가능합니다.");
+				        }
+				        
+				        // 4. 이메일 검증
+				        ValidationUtils.requireNotNullAndEmpty(memberEmail, "이메일을 입력해 주세요.");
+				        if (!(memberEmail.contains("@") && memberEmail.contains("."))) {
+				            System.out.println("이메일 형식이 잘못되었습니다.");
+				        }
+				        
+				        // 5. 전화번호 검증
+				        ValidationUtils.requireNotNullAndEmpty(memberPhone, "전화번호를 입력해 주세요.");
+				        if (!(memberPhone.startsWith("010-") && memberPhone.length() == 13)) {
+				            System.out.println("전화번호는 010-0000-0000 형식이어야 합니다.");
+				        }
+				        
+				        // 6. 주소 검증
+				        ValidationUtils.requireNotNullAndEmpty(memberAddress, "주소를 입력해 주세요.");
+				        ValidationUtils.requireMaxLength(memberAddress, 50, "주소는 50자 이내로 입력해 주세요.");
+				        // 중복 검사 1. 아이디
+				        if (PersonRepository.existsById(memberId)) {
+				            System.out.println("❌ 이미 사용 중인 아이디입니다.");
+				            return;
+				        }
+				        
+				        // 중복 검사 2. 이메일
+				        if (PersonRepository.isExistingEmail(memberEmail)) {
+				            System.out.println("❌ 이미 사용 중인 이메일입니다.");
+				            return;
+				        }
+
+						// 회원 등록 
+				        Customer newMember = new Customer(memberId, memberPassword, memberName, memberAddress, memberEmail,memberPhone );
+				        // 저장까지 하기!
+				        personRepository.savePerson(newMember); 
+				        System.out.println("✅ 회원가입이 완료되었습니다!");
+					
+					} catch (ValidationException e) {
+						System.out.println("오류가 발생했습니다 : " + e.getMessage());
+					}
+					
 					break;
 				case "2":
-					System.out.println("\n===========   로그인   =============");
-					System.out.println("아이디를 입력해 주세요");
-					String id = scanner.nextLine();
-					System.out.println("패스워드를 입력해 주세요");
-					String password = scanner.nextLine();
-					// userRosi, managerrepo valid
-					// getrole if문
-					
-					System.out.println("로그인 되었습니다.");
-					System.out.println("====================================\n");
-					//로그인 할 때 아이디가 admin이면 관리자 모드로 로그인
+					LoginController loginController = LoginController.getInstance();
+					String userRole = loginController.login();
+				    
+				    if(userRole != null) {
+				        System.out.println("====================================\n");
+				        
+				        if(userRole.equals("관리자")) {
+				            // 관리자 로그인 메뉴 여기에 넣어주세요
+				        } else {
+				            // 일반 사용자 메뉴 여기에 넣어주세요
+				        }
+				    }
+				    Person currentUser;
+				    //로그인 실패
+				    SessionManager.setCurrentManager(currentUser);
+				    break;
 					if(SessionManager.getCurrentUser().getRole().equals("관리자")) {
+						manager = (Manager) currentUser;
 						// 관리자 로그인 메뉴
+						String menu2;
 						do {
 							System.out.println("╔════════════════════════════════════════════╗");
 							System.out.println("║     🛍️  "+userService.getMallName()+"                 ║");
@@ -82,13 +178,14 @@ public class MainController {
 							System.out.println("0. 로그아웃");
 							System.out.print("메뉴를 선택하세요: _");
 							
-							menu = scanner.nextLine();
-							switch(menu) {
+							menu2 = scanner.nextLine();
+							switch(menu2) {
 								case "1":
 									adminOrderManageMenu();
 									break;
 								case "2":
 									// 관리자 마이페이지
+									String menu3;
 									do {
 										System.out.println("┌────────────────────────────────────┐");
 										System.out.println("│    👤[관리자 모드] 마이페이지            │");
@@ -100,19 +197,25 @@ public class MainController {
 										System.out.println("└────────────────────────────────────┘");
 										System.out.print("메뉴를 선택하세요: _");
 										
-										menu = scanner.nextLine();			
-										switch(menu) {
+										menu3 = scanner.nextLine();			
+										switch(menu3) {
 											case "1":
 												//내 정보 조회
 												System.out.println("\n========  내 정보 조회  ==========");
-												
+												System.out.println(manager);
 												System.out.println("===============================\n");
 												break;
 											case "2":
 												System.out.println("\n======== 비밀번호 변경 ==========");
 												System.out.print("변경할 비밀번호를 입력해주세요: _");
 												String changePassword = scanner.nextLine();
-												
+												ValidationUtils.requireNotNullAndEmpty(changePassword, "비밀번호를 입력해 주세요.");
+										        ValidationUtils.requireMinLength(changePassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
+										        ValidationUtils.requireMaxLength(changePassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
+										        if (!changePassword.matches(".*[a-zA-Z].*") || !changePassword.matches(".*[0-9].*")) {
+										            throw new ValidationException("비밀번호는 영문과 숫자를 모두 포함해야 합니다.");
+										        }
+										        userService.changePassword(customer, changePassword);
 												System.out.println("변경이 완료되었습니다.");
 												System.out.println("====================================\n");
 												break;
@@ -120,6 +223,7 @@ public class MainController {
 												System.out.println("\n======== 개인정보 수정 ==========");
 												System.out.print("변경할 주소를 입력하세요: _");
 												String address = scanner.nextLine();
+												userService.updateAddress(customer.getId(), menu, address);
 												System.out.print("변경할 이메일을 입력하세요: _");
 												String email = scanner.nextLine();
 												System.out.print("변경할 전화번호를 입력하세요: _");
@@ -134,7 +238,7 @@ public class MainController {
 												System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 												break;
 										}
-									}while(!menu.equals("0"));
+									}while(!menu3.equals("0"));
 									break;
 								case "3":
 									itemController(scanner);
@@ -152,32 +256,62 @@ public class MainController {
 										System.out.println("└────────────────────────────────────┘");
 										System.out.print("메뉴를 선택하세요: _");
 										
-										menu = scanner.nextLine();
+										menu3 = scanner.nextLine();
 										switch(menu) {
 											case "1":
 												System.out.println("\n=======  전체 회원 조회  =========");
-												
+												List<Customer> customerList = FileManagement.readFromFile(Constants.USER_DATA_FILE);
+										        for (Customer c : customerList) {
+										            System.out.println(customer.toString());
+										        }
 												System.out.println("=================================\n");
 												break;
 											case "2":
 												System.out.println("\n========   회원 검색   =========");
-												System.out.print("검색할 회원의 이름을 입력하세요: _");
-												String name = scanner.nextLine();
+												System.out.print("🔍 검색할 회원의 이름을 입력하세요: _");
+												String searchName = scanner.nextLine();
 												
+												List<Person> foundMembers = PersonRepository.findByNameContains(searchName);
+												if (foundMembers.isEmpty()) {
+												    System.out.println("❌ 검색 결과가 없습니다.");
+												} else {
+												    System.out.println("검색 결과:");
+												    for (Person person : foundMembers) {
+												        System.out.println(person.toString());
+												    }
+												}
 												System.out.println("==============================\n");
 												break;
 											case "3":
 												System.out.println("\n========  회원 상세 정보  =========");
 												System.out.print("정보를 확인할 회원의 id를 입력하세요: _");
 												String searchId = scanner.nextLine();
-												
+												PersonRepository.showMemberDetails(searchId);
 												System.out.println("==================================");
 											case "4":
 												System.out.println("\n========   회원 강제 탈퇴   ========");
-												System.out.print("탈퇴시킬 회원의 id를 입력해주세요: _");
+												System.out.print("🔍 회원 탈퇴를 원하는 ID를 입력해주세요: _");
 												String leaveId = scanner.nextLine();
 												
-												System.out.println("탈퇴시켰습니다.");
+												System.out.print("⚠️ 해당 회원을 탈퇴하시겠습니까?(y/n) " + leaveId + " : ");
+												String yesOrNo = scanner.nextLine().trim().toLowerCase();
+												
+												switch(yesOrNo) {
+													case "y" :
+														PersonRepository repo = new PersonRepository(); 
+														repo.deleteById(leaveId);
+														System.out.println("====================================");
+														System.out.println("☑️ 해당 ID는 탈퇴되었습니다 : "+leaveId);
+														System.out.println("====================================");
+														break;
+													case "n" :
+														System.out.println("회원 탈퇴 진행을 취소합니다");
+														break;
+													default :
+														System.out.println("❌ 다음을 입력해주세요: y 또는 n");
+														break;
+													}
+													break;
 												System.out.println("====================================");
 											case "0":
 												break;
@@ -185,7 +319,7 @@ public class MainController {
 												System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 												break;
 										}
-									}while(!menu.equals("0"));
+									}while(!menu3.equals("0"));
 									break;
 								case "0":
 									break;
@@ -194,9 +328,11 @@ public class MainController {
 									break;
 							
 							}
-						}while(!menu.equals("0"));
+						}while(!menu2.equals("0"));
 					}else {
 						// 일반 사용자 메뉴
+						customer = (Customer) currentUser;
+						String menu2;
 						do {
 							System.out.println("╔════════════════════════════════════════════╗");
 							System.out.println("║     🛍️  Java Shopping Mall                 ║");
@@ -211,8 +347,8 @@ public class MainController {
 							System.out.println("0. 로그아웃");
 							System.out.print("\n메뉴를 선택하세요: _");
 							
-							menu = scanner.nextLine();
-							switch(menu) {
+							menu2 = scanner.nextLine();
+							switch(menu2) {
 								case "1":
 									// 상품 둘러보기 메뉴
 									lookAroundGoods();
@@ -224,7 +360,7 @@ public class MainController {
 									break;
 								case "3":
 									// 장바구니 관리
-									cartManageMenu(customer.getId());
+									cartManageMenu(customer);
 								case "4":
 									//주문하기
 									System.out.println("\n===============  주문하기 ================");
@@ -237,7 +373,8 @@ public class MainController {
 									System.out.println("========================================\n");
 									break;
 								case "6":
-									// 일반 사용자 마이페이지
+								// 일반 사용자 마이페이지
+									String menu3;
 									do {
 										System.out.println("┌────────────────────────────────────┐");
 										System.out.println("│         👤 마이페이지                 │");
@@ -251,10 +388,12 @@ public class MainController {
 										System.out.println("└────────────────────────────────────┘");
 										System.out.print("메뉴를 선택하세요: _");
 										
-										menu = scanner.nextLine();
-										switch(menu) {
+										menu3 = scanner.nextLine();
+										switch(menu3) {
 											case "1":
 												System.out.println("\n======== 내 정보 조회 ========");
+												System.out.print("비밀번호를 입력해주세요. : ");
+												String nowPassword = scanner.nextLine();
 												System.out.println(SessionManager.getCurrentUser().toString());
 												System.out.println("==============================\n");
 												break;
@@ -277,9 +416,9 @@ public class MainController {
 												System.out.print("변경할 전화번호를 입력하세요: _");
 												String phoneNumber = scanner.nextLine();
 												
-												userService.updateAddress(id, password, address);
-												userService.updateEmail(id, password, email);
-												userService.updatePhone(id, password, phoneNumber);
+												userService.updateAddress(customer.getId(), nowPassword, address);
+												userService.updateEmail(customer.getId(), nowPassword, email);
+												userService.updatePhone(customer.getId(), nowPassword, phoneNumber);
 												System.out.println("변경이 완료되었습니다.");
 												System.out.println("====================================\n");
 												break;
@@ -305,14 +444,14 @@ public class MainController {
 												System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 												break;
 										}
-									}while(!menu.equals("0"));
+									}while(!menu3.equals("0"));
 									break;
 								case "0":
 									break;
 								default:
 									break;
 							}
-						}while(!menu.equals("0"));
+						}while(!menu2.equals("0"));
 					}
 					break;
 				case "3":

@@ -12,6 +12,7 @@ import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.repository.UserRepository;
 import com.shoppingmall.service.ManagerService;
 import com.shoppingmall.service.UserService;
+import com.shoppingmall.util.SessionManager;
 
 public class MainController {
 	private Scanner scanner;
@@ -492,7 +493,7 @@ public class MainController {
 										switch(menu) {
 											case "1":
 												System.out.println("\n======== 내 정보 조회 ========");
-												
+												System.out.println(SessionManager.getCurrentUser().toString());
 												System.out.println("==============================\n");
 												break;
 												
@@ -514,6 +515,9 @@ public class MainController {
 												System.out.print("변경할 전화번호를 입력하세요: _");
 												String phoneNumber = scanner.nextLine();
 												
+												userService.updateAddress(id, password, address);
+												userService.updateEmail(id, password, email);
+												userService.updatePhone(id, password, phoneNumber);
 												System.out.println("변경이 완료되었습니다.");
 												System.out.println("====================================\n");
 												break;

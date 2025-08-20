@@ -1,6 +1,7 @@
 package com.shoppingmall.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import com.shoppingmall.exception.ShoppingMallException;
@@ -8,6 +9,7 @@ import com.shoppingmall.models.CartItem;
 import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;
 import com.shoppingmall.models.Manager;
+import com.shoppingmall.models.Order;
 import com.shoppingmall.persistence.FileManagement;
 import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.service.ManagerService;
@@ -35,10 +37,10 @@ public class MainController {
 	
 	//메인메뉴
 	private void showMainMenu() throws ShoppingMallException {
-		Customer customer = null;
-		Manager manager = null;
 		while(true) {
 			// 메인메뉴
+			Customer customer = null;
+			Manager manager;
 			System.out.println("╔════════════════════════════════════════════╗");
 			System.out.println("║     🛍️  "+userService.getMallName()+"                 ║");
 			System.out.println("╚════════════════════════════════════════════╝");
@@ -65,11 +67,11 @@ public class MainController {
 					System.out.println("로그인 되었습니다.");
 					System.out.println("====================================\n");
 					//로그인 할 때 아이디가 admin이면 관리자 모드로 로그인
-					if(id.equals("admin")) {
+					if(SessionManager.getCurrentUser().getRole().equals("관리자")) {
 						// 관리자 로그인 메뉴
 						do {
 							System.out.println("╔════════════════════════════════════════════╗");
-							System.out.println("║     🛍️  "+managerService.getMallName()+"                 ║");
+							System.out.println("║     🛍️  "+userService.getMallName()+"                 ║");
 							System.out.println("║      [관리자 모드] 환영합니다!                   ║");
 							System.out.println("╚════════════════════════════════════════════╝");
 							System.out.println("1. 주문 관리");
@@ -82,41 +84,7 @@ public class MainController {
 							menu = scanner.nextLine();
 							switch(menu) {
 								case "1":
-									do {
-										System.out.println("┌────────────────────────────────────┐");
-										System.out.println("│   📦[관리자 모드] 주문 관리             │");
-										System.out.println("├────────────────────────────────────┤");
-										System.out.println("│  1. 주문 내역 확인                    │");
-										System.out.println("│  2. 주문 confirm                    │");
-										System.out.println("│  3. 주문 취소                        │");
-										System.out.println("│  0. 돌아가기                         │");
-										System.out.println("└────────────────────────────────────┘");
-										System.out.print("메뉴를 선택하세요: _");
-										
-										menu = scanner.nextLine();
-										switch(menu) {
-											case "1":
-												System.out.println("\n========   주문 내역   =========");
-												
-												System.out.println("================================\n");
-												break;
-											case "2":
-												System.out.println("\n======   주문 confirm   =======");
-												
-												System.out.println("================================\n");
-												break;
-											case "3":
-												System.out.println("\n=======   주문 취소   =======");
-												
-												System.out.println("==============================");
-												break;
-											case "0":
-												break;
-											default:
-												System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
-												break;
-										}
-									}while(!menu.equals("0"));
+									adminOrderManageMenu();
 									break;
 								case "2":
 									// 관리자 마이페이지
@@ -169,12 +137,11 @@ public class MainController {
 									break;
 								case "3":
 									itemController(scanner);
-									break;
 								case "4":
 									// 관리자 사용자 관리 메뉴
 									do {
 										System.out.println("┌────────────────────────────────────┐");
-										System.out.println("│      👥 [관리자 모드] 사용자 관리         │");
+										System.out.println("│      👥 [관리자 모드] 사용자 관리        │");
 										System.out.println("├────────────────────────────────────┤");
 										System.out.println("│  1. 전체 회원 조회                     │");
 										System.out.println("│  2. 회원 검색(이름으로 검색)            │");
@@ -183,6 +150,7 @@ public class MainController {
 										System.out.println("│  0. 돌아가기                         │");
 										System.out.println("└────────────────────────────────────┘");
 										System.out.print("메뉴를 선택하세요: _");
+										
 										menu = scanner.nextLine();
 										switch(menu) {
 											case "1":
@@ -223,6 +191,7 @@ public class MainController {
 								default:
 									System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 									break;
+							
 							}
 						}while(!menu.equals("0"));
 					}else {
@@ -230,7 +199,7 @@ public class MainController {
 						do {
 							System.out.println("╔════════════════════════════════════════════╗");
 							System.out.println("║     🛍️  Java Shopping Mall                 ║");
-							System.out.println("║       환영합니다, [사용자명]님!                   ║");
+							System.out.printf("║       환영합니다, [%s]님!                 ║\n", SessionManager.getCurrentUser().getId());
 							System.out.println("╚════════════════════════════════════════════╝");
 							System.out.println("1. 상품 둘러보기");
 							System.out.println("2. 상품 검색");
@@ -254,153 +223,20 @@ public class MainController {
 									break;
 								case "3":
 									// 장바구니 관리
-									do {
-										System.out.println("┌────────────────────────────────────┐");
-										System.out.println("│         🛒 장바구니 관리               │");
-										System.out.println("├────────────────────────────────────┤");
-										System.out.println("│  1. 장바구니 조회                      │");
-										System.out.println("│  2. 상품 추가                        │");
-										System.out.println("│  3. 수량 변경                        │");
-										System.out.println("│  4. 상품 삭제                        │");
-										System.out.println("│  5. 장바구니 비우기                    │");
-										System.out.println("│  0. 돌아가기                         │");
-										System.out.println("└────────────────────────────────────┘");
-										System.out.print("메뉴를 선택하세요: _");
-										
-										menu = scanner.nextLine();
-										switch(menu) {
-											case "1":
-												System.out.println("\n=========== 장바구니 조회 ============");
-												ArrayList<CartItem> cartItems = userService.getCarts().get(id);
-												if(cartItems == null || cartItems.isEmpty()) {
-													System.out.println("장바구니가 비어 있습니다.");
-												} else {
-													System.out.println("[장바구니 현재 목록]");
-													for(CartItem ci : cartItems) {
-														System.out.printf("- %s | 가격: %,d | 수량: %d | 합계: %,d원\n",
-															ci.getItem().getName(), ci.getItem().getPrice(), ci.getQuantity(), ci.getTotalPrice());
-
-													}
-												}
-												System.out.println("=====================================\n");
-												break;
-												
-											case "2":
-												System.out.println("\n=========  상품 추가 =============");
-												System.out.print("추가할 상품의 이름을 입력해주세요: _");
-												name = scanner.nextLine();
-												Item item = userService.getItembyName(name);
-												if(item == null) {
-													System.out.println("존재하지 않는 상품입니다.");
-													continue;
-												}
-												System.out.print("추가 수량을 입력하세요: ");
-												int qty;
-												try {
-													qty = Integer.parseInt(scanner.nextLine());
-												} catch(Exception e) {
-													System.out.println("올바른 수량을 입력해주세요."); continue;
-												}
-												try {
-													userService.getCarts().putIfAbsent(id, new ArrayList<CartItem>());
-													userService.getCarts().get(id).add(new CartItem(item, qty));
-													System.out.println("장바구니에 상품이 추가되었습니다.");
-												} catch(Exception e) {
-													System.out.println("추가 실패: " + e.getMessage());
-												}
-												System.out.println("================================\n");
-												break;
-												
-											case "3":
-												System.out.println("\n===========  수량 변경  ===============");
-												System.out.print("변경할 수량을 입력해주세요: _");
-												String sAmount = scanner.nextLine();
-												int amount = Integer.parseInt(sAmount);
-												ArrayList<CartItem> cartItems1 = userService.getCarts().get(id);
-												if(cartItems1 == null || cartItems1.isEmpty()) {
-													System.out.println("장바구니가 비어 있습니다."); continue;
-												}
-												System.out.print("수량을 변경할 상품 이름: ");
-												String targetName = scanner.nextLine();
-												boolean found = false;
-												for(CartItem ci : cartItems1) {
-													if(ci.getItem().getName().equals(targetName)) {
-														System.out.print("새 수량을 입력하세요: ");
-														int newQty;
-														try {
-															newQty = Integer.parseInt(scanner.nextLine());
-															if(newQty <= 0) {
-																System.out.println("수량은 1 이상이어야 합니다."); break;
-															}
-															// 수량 변경(간단 예시: 기존 객체 대체)
-														 cartItems1.remove(ci);
-														 cartItems1.add(new CartItem(ci.getItem(), newQty));
-														 System.out.println("수량이 변경되었습니다.");
-														} catch(Exception e) {
-															System.out.println("변경 실패: " + e.getMessage());
-														}
-														found = true; break;
-													}
-												}
-												if(!found) System.out.println("장바구니에 해당 상품이 없습니다.");
-												System.out.println("=======================================\n");
-												break;
-												
-											case "4":
-												System.out.println("\n===========  상품 삭제  ===============");
-												System.out.print("삭제할 상품의 상품명을 입력해주세요: _");
-												name = scanner.nextLine();
-												
-												System.out.println("성공적으로 삭제되었습니다!");
-												System.out.println("======================================\n");
-												break;
-												
-											case "5":
-												System.out.println("\n============  장바구니 비우기  =============");
-												cartItems = userService.getCarts().get(id);
-												if(cartItems == null || cartItems.isEmpty()) {
-													System.out.println("장바구니가 비어 있습니다."); continue;
-												}
-												System.out.print("삭제할 상품 이름: ");
-												String delName = scanner.nextLine();
-												boolean removed = cartItems.removeIf(ci -> ci.getItem().getName().equals(delName));
-												if(removed) {
-													System.out.println("장바구니에서 상품이 삭제되었습니다.");
-												} else {
-													System.out.println("장바구니에 해당 상품이 없습니다.");
-												}
-												
-												cartItems = userService.getCarts().get(delName);
-												if(cartItems != null) cartItems.clear();
-												System.out.println("장바구니가 비워졌습니다.");
-												System.out.println("=========================================\n");
-												break;
-												
-											case "0":
-												break;
-											default:
-												System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
-												break;
-										}
-										if(1!=1) System.out.println("장바구니에 해당 상품이 없습니다.");
-										System.out.println("=======================================\n");
+									cartManageMenu(customer.getId());
 									
-									} while(menu!= "0");
-								case "4" :
-								//주문하기
-								System.out.println("\n===============  주문하기 ================");
-								
-								System.out.println("==========================================\n");
-								break;
-								case "5" :
-								System.out.println("\n=============  주문내역  ===============");
-								
-								System.out.println("========================================\n");
-								break;
-								case "6" :
-								
-								break;
-							}
+								case "4":
+									//주문하기
+									System.out.println("\n===============  주문하기 ================");
+									placeOrderMenu(customer);
+									System.out.println("==========================================\n");
+									break;
+								case "5":
+									System.out.println("\n=============  주문내역  ===============");
+									showUserOrdersMenu(customer);
+									System.out.println("========================================\n");
+									break;
+								case "6":
 									// 일반 사용자 마이페이지
 									do {
 										System.out.println("┌────────────────────────────────────┐");
@@ -470,6 +306,11 @@ public class MainController {
 												break;
 										}
 									}while(!menu.equals("0"));
+									break;
+								case "0":
+									break;
+								default:
+									break;
 							}
 						}while(!menu.equals("0"));
 					}
@@ -483,9 +324,263 @@ public class MainController {
 				default:
 					System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 					break;
+			}
 		}
+	}
 
-	public void itemController(Scanner scanner) throws ShoppingMallException {
+	private void lookAroundGoods() {
+		String menu;
+		do {
+			/*
+			 * 상품 둘러보기
+			 * 리뷰하기는 마이페이지에서
+			 */
+			System.out.println("┌────────────────────────────────────┐");
+			System.out.println("│         🛍️ 상품 둘러보기               │");
+			System.out.println("├────────────────────────────────────┤");
+			System.out.println("│  1. 전체 상품 보기                    │");
+			System.out.println("│  2. 카테고리별 보기                    │");
+			System.out.println("│  3. 가격대별 보기                     │");
+			System.out.println("│  4. 베스트셀러                       │");
+			System.out.println("│  5. 신상품                          │");
+			System.out.println("│  6. 상품 상세보기                     │");
+			System.out.println("│  0. 돌아가기                         │");
+			System.out.println("└────────────────────────────────────┘");
+			System.out.print("메뉴를 선택하세요: _");
+			
+			menu = scanner.nextLine();
+			switch(menu) {
+				case "1":
+					System.out.println("\n======= 전체 상품 보기 ==========");
+					
+					System.out.println("================================\n");
+					break;
+				case "2":
+					//카테고리별 보기
+					System.out.println("\n======= 카테고리별 보기 ========");
+					System.out.print("카테고리를 입력해 주세요");
+					String category = scanner.nextLine();
+					
+					System.out.println("================================\n");
+					break;
+				case "3":
+					//가격대별 보기
+					System.out.println("\n======== 가격대별 보기 ===========");
+					System.out.print("번호를 선택해 주세요.(1. 3만원 미만, 2. 3-10만원, 3. 10-50만원,4. 50만원 이상)");
+					int number = scanner.nextInt();
+					scanner.nextLine();
+					
+					System.out.println("=================================\n");
+					break;
+				case "4":
+					//베스트셀러
+					System.out.println("\n========  베스트셀러  ==========");
+					userService.findBestSeller();
+					System.out.println("===============================\n");
+					break;
+				case "5":
+					// 신상품은 등록 3일 이내 제품
+					System.out.println("\n======== 신상품 보기 ============");
+					
+					System.out.println("================================\n");
+					break;
+				case "6":
+					//상품 상세보기
+					System.out.println("\n==========  상품 상세보기  ===========");
+					System.out.print("상품 이름을 입력해 주세요");
+					String itemname = scanner.nextLine();
+					userService.showItemDetails(itemname);
+					
+					System.out.println("=====================================\n");
+					break;
+				case "0":
+					break;
+				default:
+					System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+					break;
+			}
+		}while(!menu.equals("0"));
+	}
+
+	
+	 // 1. 관리자 모드 주문관리
+    public void adminOrderManageMenu() {
+        while (true) {
+            System.out.println("┌────────────────────────────────────┐");
+            System.out.println("│   📦[관리자 모드] 주문 관리             │");
+            System.out.println("├────────────────────────────────────┤");
+            System.out.println("│  1. 주문 내역 확인                    │");
+            System.out.println("│  2. 주문 confirm                    │");
+            System.out.println("│  3. 주문 취소                        │");
+            System.out.println("│  0. 돌아가기                         │");
+            System.out.println("└────────────────────────────────────┘");
+            System.out.print("메뉴를 선택하세요: _");
+            String menu = scanner.nextLine();
+            switch(menu) {
+                case "1":
+                    managerService.showAllOrders();
+                    break;
+                case "2":
+                    System.out.print("확정할 주문번호를 입력하세요: ");
+                    String confirmOrderId = scanner.nextLine().trim();
+                    try {
+                        Order order = (Order)managerService.getOrders().get(confirmOrderId);
+                        managerService.confirmOrder(order != null ? order.getStatus() : null, confirmOrderId);
+                        System.out.println("주문이 확정되었습니다.");
+                    } catch(Exception e) {
+                        System.err.println("확정 실패: " + e.getMessage());
+                    }
+                    break;
+                case "3":
+                    System.out.print("취소할 주문번호를 입력하세요: ");
+                    String cancelOrderId = scanner.nextLine().trim();
+                    try {
+                        Order order = (Order)managerService.getOrders().get(cancelOrderId);
+                        managerService.cancelOrder(order != null ? order.getStatus() : null, cancelOrderId);
+                        System.out.println("주문이 취소되었습니다.");
+                    } catch(Exception e) {
+                        System.err.println("취소 실패: " + e.getMessage());
+                    }
+                    break;
+                case "0":
+                    return;
+                default:
+                    System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+            }
+            System.out.println();
+        }
+    }
+
+    // 2. 사용자 장바구니 관리
+    public void cartManageMenu(String userId) {
+        while(true) {
+            System.out.println("┌────────────────────────────────────┐");
+            System.out.println("│         🛒 장바구니 관리               │");
+            System.out.println("├────────────────────────────────────┤");
+            System.out.println("│  1. 장바구니 조회                      │");
+            System.out.println("│  2. 상품 추가                        │");
+            System.out.println("│  3. 수량 변경                        │");
+            System.out.println("│  4. 상품 삭제                        │");
+            System.out.println("│  5. 장바구니 비우기                    │");
+            System.out.println("│  0. 돌아가기                         │");
+            System.out.println("└────────────────────────────────────┘");
+            System.out.print("메뉴를 선택하세요: _");
+            String menu = scanner.nextLine();
+            ArrayList<CartItem> cartItems = userService.getCarts().get(userId);
+            switch(menu) {
+                case "1":
+                    if(cartItems == null || cartItems.isEmpty()) {
+                        System.out.println("장바구니가 비어 있습니다.");
+                    } else {
+                        System.out.println("[장바구니 현재 목록]");
+                        for(CartItem ci : cartItems) {
+                            System.out.println(ci);
+                        }
+                    }
+                    break;
+                case "2":
+                    System.out.print("추가할 상품의 이름을 입력해주세요: _");
+                    String pName = scanner.nextLine();
+                    Item item = userService.getItembyName(pName);
+                    if(item == null) {
+                        System.out.println("존재하지 않는 상품입니다.");
+                        break;
+                    }
+                    System.out.print("추가 수량을 입력하세요: ");
+                    try {
+                        int qty = Integer.parseInt(scanner.nextLine().trim().replaceAll("개., ", ""));
+                        userService.getCarts().putIfAbsent(userId, new ArrayList<CartItem>());
+                        userService.getCarts().get(userId).add(new CartItem(item, qty));
+                        System.out.println("장바구니에 상품이 추가되었습니다.");
+                    } catch(Exception e) {
+                        System.out.println("추가 실패: " + e.getMessage());
+                    }
+                    break;
+                case "3":
+                    System.out.print("수량을 변경할 상품 이름: ");
+                    String targetName = scanner.nextLine();
+                    boolean found = false;
+                    if(cartItems != null) {
+                        for(CartItem ci : cartItems) {
+                            if(ci.getItem().getName().equals(targetName)) {
+                                System.out.print("새 수량을 입력하세요: ");
+                                try {
+                                    int newQty = Integer.parseInt(scanner.nextLine().trim().replaceAll("개., ", ""));
+                                    if(newQty <= 0) {
+                                        System.out.println("수량은 1 이상이어야 합니다.");
+                                        break;
+                                    }
+                                    cartItems.remove(ci);
+                                    cartItems.add(new CartItem(ci.getItem(), newQty));
+                                    System.out.println("수량이 변경되었습니다.");
+                                    found = true;
+                                    break;
+                                } catch(Exception e) {
+                                    System.out.println("변경 실패: " + e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                    if(!found) System.out.println("장바구니에 해당 상품이 없습니다.");
+                    break;
+                case "4":
+                    System.out.print("삭제할 상품의 상품명을 입력해주세요: _");
+                    String delName = scanner.nextLine();
+                    boolean removed = false;
+                    if(cartItems != null)
+                        removed = cartItems.removeIf(ci -> ci.getItem().getName().equals(delName));
+                    if(removed) {
+                        System.out.println("장바구니에서 상품이 삭제되었습니다.");
+                    } else {
+                        System.out.println("장바구니에 해당 상품이 없습니다.");
+                    }
+                    break;
+                case "5":
+                    if(cartItems != null) cartItems.clear();
+                    System.out.println("장바구니가 비워졌습니다.");
+                    break;
+                case "0":
+                    return;
+                default:
+                    System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+            }
+            System.out.println();
+        }
+    }
+
+    // 3. 사용자 주문하기
+    public void placeOrderMenu(Customer customer) {
+        try {
+        	System.out.print("배송지를 변경하시겠습니까? y/n:_");
+        	String changeAddressboolean = scanner.nextLine();
+        	if (changeAddressboolean.toLowerCase() == "n") {
+        		userService.placeOrder(customer);
+        		System.out.println("주문이 정상적으로 완료되었습니다.");
+				return;
+			}
+        	System.out.println("변경할 주소지를 입력해 주세요");
+        	String changeAddress = scanner.nextLine();
+            userService.placeOrder(customer, changeAddress);
+            System.out.println("주문이 정상적으로 완료되었습니다.");
+        } catch(Exception e) {
+            System.err.println("주문 실패: " + e.getMessage());
+        }
+        System.out.println();
+    }
+
+    // 4. 사용자 주문내역 조회
+    public void showUserOrdersMenu(Customer customer) {
+        HashMap<String, Order> orders = userService.getOrders();
+        System.out.println("=== 주문 내역 ===");
+        if (customer.getOrderIDs().size() == 0) {
+        	System.out.println("주문내역이 없습니다.");
+        	return;
+		}
+        for (String or : customer.getOrderIDs()) {
+			System.out.println(orders.get(or));
+		}
+    }
+    public void itemController(Scanner scanner) throws ShoppingMallException {
 		while(true) {
 			System.out.println("┌────────────────────────────────────┐");
 			System.out.println("│      📦 [관리자] 상품 관리              │");
@@ -614,7 +709,7 @@ public class MainController {
 				System.out.println("===================================\n");
 				break;
 			case "5":
-				// 상품 둘러보기 메소드로 바로 가기
+				lookAroundGoods();
 				break;
 			default:
 				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
@@ -622,80 +717,4 @@ public class MainController {
 			}
 		}
 	}
-
-
-	private void lookAroundGoods() {
-		String menu;
-		do {
-			/*
-			 * 상품 둘러보기
-			 * 리뷰하기는 마이페이지에서
-			 */
-			System.out.println("┌────────────────────────────────────┐");
-			System.out.println("│         🛍️ 상품 둘러보기               │");
-			System.out.println("├────────────────────────────────────┤");
-			System.out.println("│  1. 전체 상품 보기                    │");
-			System.out.println("│  2. 카테고리별 보기                    │");
-			System.out.println("│  3. 가격대별 보기                     │");
-			System.out.println("│  4. 베스트셀러                       │");
-			System.out.println("│  5. 신상품                          │");
-			System.out.println("│  6. 상품 상세보기                     │");
-			System.out.println("│  0. 돌아가기                         │");
-			System.out.println("└────────────────────────────────────┘");
-			System.out.print("메뉴를 선택하세요: _");
-			
-			menu = scanner.nextLine();
-			switch(menu) {
-				case "1":
-					System.out.println("\n======= 전체 상품 보기 ==========");
-					
-					System.out.println("================================\n");
-					break;
-				case "2":
-					//카테고리별 보기
-					System.out.println("\n======= 카테고리별 보기 ========");
-					System.out.print("카테고리를 입력해 주세요");
-					String category = scanner.nextLine();
-					
-					System.out.println("================================\n");
-					break;
-				case "3":
-					//가격대별 보기
-					System.out.println("\n======== 가격대별 보기 ===========");
-					System.out.print("번호를 선택해 주세요.(1. 3만원 미만, 2. 3-10만원, 3. 10-50만원,4. 50만원 이상)");
-					int number = scanner.nextInt();
-					scanner.nextLine();
-					
-					System.out.println("=================================\n");
-					break;
-				case "4":
-					//베스트셀러
-					System.out.println("\n========  베스트셀러  ==========");
-					userService.findBestSeller();
-					System.out.println("===============================\n");
-					break;
-				case "5":
-					// 신상품은 등록 3일 이내 제품
-					System.out.println("\n======== 신상품 보기 ============");
-					
-					System.out.println("================================\n");
-					break;
-				case "6":
-					//상품 상세보기
-					System.out.println("\n==========  상품 상세보기  ===========");
-					System.out.print("상품 이름을 입력해 주세요");
-					String itemname = scanner.nextLine();
-					userService.showItemDetails(itemname);
-					
-					System.out.println("=====================================\n");
-					break;
-				case "0":
-					break;
-				default:
-					System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
-					break;
-			}
-		}while(!menu.equals("0"));
-	}
-
 }

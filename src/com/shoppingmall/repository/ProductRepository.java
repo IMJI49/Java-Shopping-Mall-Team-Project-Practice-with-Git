@@ -1,14 +1,12 @@
 package com.shoppingmall.repository;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.shoppingmall.exception.ValidationException;
+
+
 import com.shoppingmall.models.Item;
 import com.shoppingmall.persistence.FileManagement;
 import com.shoppingmall.util.Constants;
-import com.shoppingmall.util.ValidationUtils;
 
 public class ProductRepository {
 	// delete method 생성
@@ -30,26 +28,7 @@ public class ProductRepository {
 	}
 	
     // 검색 필터 고도화 : 상품명이나 설명 중 어느 하나에라도 검색어가 포함된 상품 검색
-	public List<Item> findProduct(String string){
-
-		try {
-			ValidationUtils.requireNotNullAndEmpty(string, "검색어를 입력해주세요.");
-			
-			List<Item> items = FileManagement.readFromFile(FILE_NAME);
-			return items.stream()
-							 .filter(item -> item.getName().toLowerCase().contains(string.toLowerCase())
-									 	||  item.getDescription().toLowerCase().contains(string.toLowerCase()))
-						     .collect(Collectors.toList());	// 리스트로 수집
-
-		} catch (ValidationException e) {
-			System.out.println(e.getMessage());
-			return Collections.emptyList();
-		}
-		catch (Exception e) {
-			System.out.println("검색어에 해당하는 상품이 없습니다."+ e.getMessage()); 
-			return Collections.emptyList();
-		}
-	}
+	
 	
     // 제품 삭제 메서드 추가
     public boolean deleteById(String id) {
@@ -102,29 +81,7 @@ public class ProductRepository {
     }
     
     
-    
-    // 리뷰 작성 메서드 구현
-    public void addReview(String itemId, double rating, String reviewText) {
-        List<Item> items = FileManagement.readFromFile(FILE_NAME);
 
-        for (Item item : items) {
-            if (item.getItemID().equals(itemId)) {
-                // 평점 추가
-                item.addRating(rating);
-                // 리뷰 내용 추가
-                item.addReviewing(reviewText);
-
-                // 파일에 저장
-                FileManagement.writeToFile(FILE_NAME, items);
-                System.out.println("리뷰가 추가되었습니다.");
-                return;
-            }
-        }
-
-        System.out.println("해당 ID의 상품을 찾을 수 없습니다.");
-    }
-
-    
 
 	
 	

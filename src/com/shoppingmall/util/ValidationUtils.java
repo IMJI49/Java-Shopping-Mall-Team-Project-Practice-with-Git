@@ -53,11 +53,15 @@ public class ValidationUtils {
 			throw new CustomerNotFoundException(message);
 		} 
 	}
-	 
-	public static void requireSufficientStock(Item item, int quantity, String message)
+	public static void maxStock(Item item, int quantity) throws ValidationException {
+		if (item.getQuantity()+ quantity > 999999) {
+			throw new ValidationException("상품 개수는 999,999개를 넘길 수 없습니다.");
+		}
+	}
+	public static void requireSufficientStock(Item item, int quantity)
 			throws InsufficientStockException {
 		if ((item.getQuantity() - quantity) < 0) {
-			throw new InsufficientStockException(message);
+			throw new InsufficientStockException("재고가 부족합니다");
 		}
 	}
 	public static void correctIDPassword(String id, String password, Customer customer) throws ValidationException {
@@ -68,9 +72,19 @@ public class ValidationUtils {
 			throw new ValidationException("아이디 혹은 비밀번호가 일치하지 안습니다.");
 		}
 	}
-	public static void orderPendingCheck(Status status, String string) {
-		
-	}
-	
-	
-}
+	public static void orderPendingCheck(Status status, String message) throws ValidationException {
+	    if (status != Status.PENDING) {
+	        throw new ValidationException(message);
+			}
+		}
+	public static void orderConfirmCheck(Status status, String message) throws ValidationException {
+	    if (status != Status.CONFIRM) {
+	        throw new ValidationException(message);
+			}
+		}
+	public static void orderShippingCheck(Status status, String message) throws ValidationException {
+	    if (status != Status.SHIPPING) {
+	        throw new ValidationException(message);
+			}
+		}
+}	

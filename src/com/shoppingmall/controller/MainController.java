@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.shoppingmall.models.CartItem;
+import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;
+import com.shoppingmall.models.Manager;
 import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.repository.UserRepository;
 import com.shoppingmall.service.ManagerService;
@@ -22,7 +24,7 @@ public class MainController {
 	
 	public MainController() {
 		this.scanner = new Scanner(System.in);
-		managerService = new ManagerService("asdf");
+		managerService = new ManagerService("Java Shopping Mall");
 		userService = new UserService("Java Shopping Mall");
 		productRepository = new ProductRepository();
 	}
@@ -33,6 +35,8 @@ public class MainController {
 	
 	//메인메뉴
 	private void showMainMenu() {
+		Customer customer = null;
+		Manager manager = null;
 		while(true) {
 			// 메인메뉴
 			System.out.println("╔════════════════════════════════════════════╗");
@@ -65,7 +69,7 @@ public class MainController {
 						// 관리자 로그인 메뉴
 						do {
 							System.out.println("╔════════════════════════════════════════════╗");
-							System.out.println("║     🛍️  "+userService.getMallName()+"                 ║");
+							System.out.println("║     🛍️  "+managerService.getMallName()+"                 ║");
 							System.out.println("║      [관리자 모드] 환영합니다!                   ║");
 							System.out.println("╚════════════════════════════════════════════╝");
 							System.out.println("1. 주문 관리");
@@ -359,6 +363,7 @@ public class MainController {
 													for(CartItem ci : cartItems) {
 														System.out.printf("- %s | 가격: %,d | 수량: %d | 합계: %,d원\n",
 															ci.getItem().getName(), ci.getItem().getPrice(), ci.getQuantity(), ci.getTotalPrice());
+
 													}
 												}
 												System.out.println("=====================================\n");

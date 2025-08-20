@@ -225,7 +225,6 @@ public class MainController {
 								case "3":
 									// 장바구니 관리
 									cartManageMenu(customer.getId());
-									
 								case "4":
 									//주문하기
 									System.out.println("\n===============  주문하기 ================");
@@ -452,7 +451,7 @@ public class MainController {
     }
 
     // 2. 사용자 장바구니 관리
-    public void cartManageMenu(String userId) {
+    public void cartManageMenu(Customer customer) {
         while(true) {
             System.out.println("┌────────────────────────────────────┐");
             System.out.println("│         🛒 장바구니 관리               │");
@@ -466,6 +465,7 @@ public class MainController {
             System.out.println("└────────────────────────────────────┘");
             System.out.print("메뉴를 선택하세요: _");
             String menu = scanner.nextLine();
+            String userId = customer.getId();
             ArrayList<CartItem> cartItems = userService.getCarts().get(userId);
             switch(menu) {
                 case "1":
@@ -489,8 +489,7 @@ public class MainController {
                     System.out.print("추가 수량을 입력하세요: ");
                     try {
                         int qty = Integer.parseInt(scanner.nextLine().trim().replaceAll("개., ", ""));
-                        userService.getCarts().putIfAbsent(userId, new ArrayList<CartItem>());
-                        userService.getCarts().get(userId).add(new CartItem(item, qty));
+                        userService.addCart(customer, pName, qty);
                         System.out.println("장바구니에 상품이 추가되었습니다.");
                     } catch(Exception e) {
                         System.out.println("추가 실패: " + e.getMessage());
@@ -511,7 +510,7 @@ public class MainController {
                                         break;
                                     }
                                     cartItems.remove(ci);
-                                    cartItems.add(new CartItem(ci.getItem(), newQty));
+                                    userService.addCart(customer, targetName, newQty);
                                     System.out.println("수량이 변경되었습니다.");
                                     found = true;
                                     break;

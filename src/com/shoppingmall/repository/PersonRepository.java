@@ -1,17 +1,19 @@
 package com.shoppingmall.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.shoppingmall.models.Manager;
-import com.shoppingmall.models.Person;
 import com.shoppingmall.models.Customer;
+import com.shoppingmall.models.Manager;
+import com.shoppingmall.models.Order;
+import com.shoppingmall.models.Person;
 import com.shoppingmall.persistence.FileManagement;
 import com.shoppingmall.util.Constants;
  
 public class PersonRepository {
 
     // 통합 인증 메서드 - Manager와 Customer 파일 모두 확인
-    public String authenticate(String id, String password) {
+    public static String authenticate(String id, String password) {
         // Manager에서 확인
         List<Manager> managers = FileManagement.readFromFile(Constants.MANAGER_DATA_FILE);
         for (Manager manager : managers) {
@@ -30,7 +32,38 @@ public class PersonRepository {
 
         return null; // 인증 실패
     }
-    
+
+    // 회원 저장 메서드 - Customer, Manager 모두 저장 가능
+    public Person savePerson(Person person) {
+        if (person instanceof Customer) {
+            List<Customer> customers = FileManagement.readFromFile(Constants.USER_DATA_FILE);
+            customers.add((Customer) person);
+            FileManagement.writeToFile(Constants.USER_DATA_FILE, customers);
+        } else if (person instanceof Manager) {
+            List<Manager> managers = FileManagement.readFromFile(Constants.MANAGER_DATA_FILE);
+            managers.add((Manager) person);
+            FileManagement.writeToFile(Constants.MANAGER_DATA_FILE, managers);
+        }
+        return person;
+    }
+    // 이메일 중복 확인 - Manager, Customer 모두 가능
+    public static boolean isExistingEmail(String email) {
+        // Manager에서 먼저 찾기
+        List<Manager> managers = FileManagement.readFromFile(Constants.MANAGER_DATA_FILE);
+        boolean existingEmail = managers.stream().filter(i -> i.getEmail().equals(email))
+				        				 .findFirst()
+				        				 .orElse(null) != null;
+        if(existingEmail) return true;
+        
+        
+        // Customer에서 찾기
+        List<Customer> customers = FileManagement.readFromFile(Constants.USER_DATA_FILE);
+        return customers.stream().filter(i -> i.getEmail().equals(email))
+											  .findFirst()
+											  .orElse(null) != null;
+
+        }
+   
     
     
     // 사용자 삭제 메서드 - Customer 계정용 // Manager의 계정은 삭제 불가능
@@ -51,14 +84,14 @@ public class PersonRepository {
     }
     
 	// 사용자 존재 여부 확인
-	public boolean existsById(String id) {
+	public static boolean existsById(String id) {
 		
 		return findById(id) != null;
 	}
     
     
     // ID로 Person 찾기 (개인정보 수정용) - Manager, Customer 모두 가능
-    private Person findById(String id) {
+    private static Person findById(String id) {
         // Manager에서 먼저 찾기
         List<Manager> managers = FileManagement.readFromFile(Constants.MANAGER_DATA_FILE);
         Manager manager = managers.stream().filter(i -> i.getId().equals(id))
@@ -231,6 +264,63 @@ public class PersonRepository {
     	return false;
     	
 	}
+    
+    // 이름으로 회원 검색 (부분 일치) - Customer만 가능
+    public static List<Person> findByNameContains(String name) {
+        List<Person> result = new ArrayList<>();
+        
+        // Customer에서 검색
+        List<Customer> customers = FileManagement.readFromFile(Constants.USER_DATA_FILE);
+        for (Customer customer : customers) {
+            if (customer.getName().contains(name)) {
+                result.add(customer);
+            }
+        }
+        
+        return result;
+    }
+    
+    // ID로 Person 찾기 (public용)
+    public static Person findByIdPublic(String id) {
+        return findById(id);
+    }
+    
+    // ID로 회원 상세 정보 조회 (주문 정보 포함) - Customer만 가능
+    public static void showMemberDetails(String id) {
+        Person member = findById(id);
+        if (member == null) {
+            System.out.println("해당 ID의 회원을 찾을 수 없습니다.");
+            return;
+        }
+        System.out.println("┌─────────────────────────────────┐");
+        System.out.println("│           회원 상세 정보           │");
+        System.out.println("└─────────────────────────────────┘");
+        System.out.println("ID: " + member.getId());
+        System.out.println("이름: " + member.getName());
+        System.out.println("이메일: " + member.getEmail());
+        System.out.println("전화번호: " + member.getPhoneNumber());
+        System.out.println("주소: " + member.getAddress());
+        System.out.println("역할: " + member.getRole());
+        
+        // 아래: 해당 회원의 주문
+       
+        List<Order> orders = FileManagement.readFromFile(Constants.ORDER_DATA_FILE);
+        List<Order> userOrders = orders.stream()
+            .filter(order -> order.getCustomer().getId().equals(id))
+            .collect(java.util.stream.Collectors.toList());
+        
+        System.out.println("총 주문 횟수: " + userOrders.size());
+        
+        if (!userOrders.isEmpty()) {
+            System.out.println("현재 주문 상태:");
+            for (Order order : userOrders) {
+                System.out.println("- 주문번호: " + order.getOrderID() + ", 상태: " + order.getStatus());
+            }
+        } else {
+            System.out.println("주문 내역이 없습니다.");
+        }
+        
+    }
 
 }
 

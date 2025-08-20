@@ -1,8 +1,6 @@
 package com.shoppingmall.controller;
 
 import java.util.ArrayList;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,22 +9,28 @@ import com.shoppingmall.models.CartItem;
 import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;
 import com.shoppingmall.models.Manager;
+import com.shoppingmall.models.Person;
+import com.shoppingmall.persistence.FileManagement;
+import com.shoppingmall.repository.PersonRepository;
 import com.shoppingmall.repository.ProductRepository;
-import com.shoppingmall.repository.UserRepository;
 import com.shoppingmall.service.ManagerService;
 import com.shoppingmall.service.UserService;
+import com.shoppingmall.util.Constants;
+import com.shoppingmall.util.ValidationUtils;
 
 public class MainController_hhe {
 	private Scanner scanner;
 	private ManagerService managerService;
 	private UserService userService;
 	private ProductRepository productRepository;
+	private PersonRepository personRepository;
 	
 	public MainController_hhe() {
 		this.scanner = new Scanner(System.in);
 		managerService = new ManagerService("Java Shopping Mall");
 		userService = new UserService("Java Shopping Mall");
 		productRepository = new ProductRepository();
+		personRepository = new PersonRepository();
 	}
 
 	public void start() {
@@ -52,63 +56,128 @@ public class MainController_hhe {
 			switch(menu) {
 				
 				case "1": //회원가입
-					try {
-						System.out.println("╔════════════════════════════════════════════╗");
-						System.out.println("║     🛍️  "+userService.getMallName()+"회원가입          ║");
-						System.out.println("╚════════════════════════════════════════════╝");
-						System.out.println("\n[ 회원 정보를 입력해 주세요 ]\n────────────────────────────\n");
-						System.out.println("▶ ID (5-20자, 영문/숫자 조합, 중복 불가) : ");
-						String memberId = scanner.nextLine().trim();
-
-						System.out.println("▶ 비밀번호 (8-20자, 영문/숫자 포함)		  : ");
-						String memberPassword = scanner.nextLine().trim();
-
-						System.out.println("▶ 이름 (2-20자, 한글/영문)     		  : ");
-						String memberName = scanner.nextLine().trim();
-
-						System.out.println("▶ 이메일 (이메일 형식, 중복 불가)		  : ");
-						String memberEmail = scanner.nextLine().trim();
-
-						System.out.println("▶ 전화번호(010-XXXX-XXXX 형식)		  : ");
-						String memberPhone = scanner.nextLine().trim();
-
-						System.out.println("▶ 주소 (50자 이내)   				  : ");
-						String memberAddress = scanner.nextLine().trim();
-
-						System.out.println("▶ 사용자:1 / 관리자2				  : ");
-						String memberType = scanner.nextLine().trim();
-
-						// 입력값 유효성 검사
-						if (memberId.isEmpty() || memberPassword.isEmpty() || memberName.isEmpty() ||memberEmail.isEmpty() 
-								|| memberPhone.isEmpty() || memberAddress.isEmpty() || memberType.isEmpty()) {
-							System.out.println("모든 필드를 입력해 주세요.");
-							return;
+						try {
+							System.out.println("╔════════════════════════════════════════════╗");
+							System.out.println("║     🛍️  "+userService.getMallName()+"회원가입          ║");
+							System.out.println("╚════════════════════════════════════════════╝");
+							System.out.println("\n[ 회원 정보를 입력해 주세요 ]\n────────────────────────────\n");
+							System.out.print("▶ ID (5-20자, 영문/숫자 조합, 중복 불가) : ");
+							String memberId = scanner.nextLine().trim();
+	
+							System.out.print("▶ 비밀번호 (8-20자, 영문/숫자 포함)	      : ");
+							String memberPassword = scanner.nextLine().trim();
+	
+							System.out.print("▶ 이름 (2-20자, 한글/영문)     	      : ");
+							String memberName = scanner.nextLine().trim();
+	
+							System.out.print("▶ 이메일 (이메일 형식, 중복 불가)		  : ");
+							String memberEmail = scanner.nextLine().trim();
+	
+							System.out.print("▶ 전화번호(010-XXXX-XXXX 형식)		  : ");
+							String memberPhone = scanner.nextLine().trim();
+	
+							System.out.print("▶ 주소 (50자 이내)   				  : ");
+							String memberAddress = scanner.nextLine().trim();
+	
+							System.out.print("▶ 사용자:1 / 관리자2				      : ");
+							String memberType = scanner.nextLine().trim();
+	
+					        // 1. ID 검증
+					        ValidationUtils.requireNotNullAndEmpty(memberId, "아이디를 입력해 주세요.");
+					        ValidationUtils.requireMinLength(memberId, 5, "❌ 아이디는 최소 5자 이상이어야 합니다.");
+					        ValidationUtils.requireMaxLength(memberId, 20, "❌ 아이디는 최대 20자 이하여야 합니다.");
+					        if (!memberId.matches("^[a-zA-Z0-9]+$")) {
+					            throw new ValidationException("❌ 아이디는 영문과 숫자만 사용 가능합니다.");
+					        }
+					        
+					        // 2. 비밀번호 검증
+					        ValidationUtils.requireNotNullAndEmpty(memberPassword, "비밀번호를 입력해 주세요.");
+					        ValidationUtils.requireMinLength(memberPassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
+					        ValidationUtils.requireMaxLength(memberPassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
+					        if (!memberPassword.matches(".*[a-zA-Z].*") || !memberPassword.matches(".*[0-9].*")) {
+					            throw new ValidationException("비밀번호는 영문과 숫자를 모두 포함해야 합니다.");
+					        }
+					        
+					        // 3. 이름 검증
+					        ValidationUtils.requireNotNullAndEmpty(memberName, "이름을 입력해 주세요.");
+					        ValidationUtils.requireMinLength(memberName, 2, "이름은 최소 2자 이상이어야 합니다.");
+					        ValidationUtils.requireMaxLength(memberName, 20, "이름은 최대 20자 이하여야 합니다.");
+					        if (!memberName.matches("^[가-힣a-zA-Z]+$")) {
+					            throw new ValidationException("이름은 한글 또는 영문만 사용 가능합니다.");
+					        }
+					        
+					        // 4. 이메일 검증
+					        ValidationUtils.requireNotNullAndEmpty(memberEmail, "이메일을 입력해 주세요.");
+					        if (!(memberEmail.contains("@") && memberEmail.contains("."))) {
+					            System.out.println("이메일 형식이 잘못되었습니다.");
+					        }
+					        
+					        // 5. 전화번호 검증
+					        ValidationUtils.requireNotNullAndEmpty(memberPhone, "전화번호를 입력해 주세요.");
+					        if (!(memberPhone.startsWith("010-") && memberPhone.length() == 13)) {
+					            System.out.println("전화번호는 010-0000-0000 형식이어야 합니다.");
+					        }
+					        
+					        // 6. 주소 검증
+					        ValidationUtils.requireNotNullAndEmpty(memberAddress, "주소를 입력해 주세요.");
+					        ValidationUtils.requireMaxLength(memberAddress, 50, "주소는 50자 이내로 입력해 주세요.");
+					        
+					        // 7. 사용자 타입 검증
+					        ValidationUtils.requireNotNullAndEmpty(memberType, "사용자 타입을 입력해 주세요.");
+					        if (memberType != "1" && memberType !="2") {
+					            throw new ValidationException("❗ 사용자 타입은 1(사용자) 또는 2(관리자)를 입력해 주세요.");
+					        }
+	
+					        // 중복 검사 1. 아이디
+					        if (PersonRepository.existsById(memberId)) {
+					            System.out.println("❌ 이미 사용 중인 아이디입니다.");
+					            return;
+					        }
+					        
+					        // 중복 검사 2. 이메일
+					        if (PersonRepository.isExistingEmail(memberEmail)) {
+					            System.out.println("❌ 이미 사용 중인 이메일입니다.");
+					            return;
+					        }
+	
+							// 회원 등록 
+					        Person newMember = memberType.equals("1")? 
+					        		new Customer(memberId, memberPassword, memberName, memberAddress, memberEmail, memberPhone)
+					        	  : new Manager(memberId, memberPassword, memberName, memberAddress, memberEmail, memberPhone);
+					        
+					        // 저장까지 하기!
+					        personRepository.savePerson(newMember); 
+					        System.out.println("✅ 회원가입이 완료되었습니다!");
+						
+						} catch (ValidationException e) {
+							System.out.println("오류가 발생했습니다 : " + e.getMessage());
 						}
 						
-						
-						
-
-						// 회원 등록 요청
-						User.addMember(memberId, memberPassword, memberName, memberEmail, memberPhone, memberAddress);
-					} catch (ValidationException e) {
-						System.out.println("");
-					}
-					
-					break;
+						break;
 					
 					
 				case "2":
-					System.out.println("\n===========   로그인   =============");
-					System.out.println("아이디를 입력해 주세요");
-					String id = scanner.nextLine();
-					System.out.println("패스워드를 입력해 주세요");
-					String password = scanner.nextLine();
-					// userRosi, managerrepo valid
-					// getrole if문
-					
-					System.out.println("로그인 되었습니다.");
-					System.out.println("====================================\n");
-					//로그인 할 때 아이디가 admin이면 관리자 모드로 로그인
+					LoginController loginController = LoginController.getInstance();
+					String userRole = loginController.login();
+				    
+				    if(userRole != null) {
+				        System.out.println("====================================\n");
+				        
+				        if(userRole.equals("관리자")) {
+				            // 관리자 로그인 메뉴 여기에 넣어주세요
+				        } else {
+				            // 일반 사용자 메뉴 여기에 넣어주세요
+				        }
+				    }
+				    //로그인 실패
+				    break;
+				    
+				    
+				    
+				    
+				    
+				    
+				    
 					if(id.equals("admin")) {
 						// 관리자 로그인 메뉴
 						while(true) {
@@ -286,42 +355,88 @@ public class MainController_hhe {
 									System.out.print("메뉴를 선택하세요: _");
 									
 									menu = scanner.nextLine();
-									if(menu.equals("1")) {
+									
+									switch(menu) {
+									
+									case "1":
 										System.out.println("\n=======  전체 회원 조회  =========");
 										
-										System.out.println("=================================\n");
-									}else if (menu.equals("2")) {
-										System.out.println("\n========   회원 검색   =========");
-										System.out.print("검색할 회원의 이름을 입력하세요: _");
-										String name = scanner.nextLine();
+										List<Customer> customerList = FileManagement.readFromFile(Constants.USER_DATA_FILE);
+								        for (Customer c : customerList) {
+								            System.out.println(customer.toString());
+								        }
 										
+										System.out.println("=================================\n");
+										
+										break;
+										
+									case "2":
+										System.out.println("\n========   회원 검색   =========");
+										System.out.print("🔍 검색할 회원의 이름을 입력하세요: _");
+										String searchName = scanner.nextLine();
+										
+										List<Person> foundMembers = PersonRepository.findByNameContains(searchName);
+										if (foundMembers.isEmpty()) {
+										    System.out.println("❌ 검색 결과가 없습니다.");
+										} else {
+										    System.out.println("검색 결과:");
+										    for (Person person : foundMembers) {
+										        System.out.println(person.toString());
+										    }
+										}
 										System.out.println("==============================\n");
-									}else if (menu.equals("3")) {
+										
+										break;
+
+										
+									case "3":
 										System.out.println("\n========  회원 상세 정보  =========");
-										System.out.print("정보를 확인할 회원의 id를 입력하세요: _");
+										System.out.print("🔍 정보를 확인할 회원의 id를 입력하세요: _");
 										String searchId = scanner.nextLine();
 										
+										PersonRepository.showMemberDetails(searchId);
+										
 										System.out.println("==================================");
-									}else if (menu.equals("4")) {
+										
+										break;
+
+										
+									case "4":
 										System.out.println("\n========   회원 강제 탈퇴   ========");
-										System.out.print("탈퇴시킬 회원의 id를 입력해주세요: _");
+										
+										System.out.print("🔍 회원 탈퇴를 원하는 ID를 입력해주세요: _");
 										String leaveId = scanner.nextLine();
 										
-										System.out.println("탈퇴시켰습니다.");
-										System.out.println("====================================");
-									}else if (menu.equals("0")) {
+										System.out.print("⚠️ 해당 회원을 탈퇴하시겠습니까?(y/n) " + leaveId + " : ");
+										String yesOrNo = scanner.nextLine().trim().toLowerCase();
+										
+										switch(yesOrNo) {
+											case "y" :
+												PersonRepository repo = new PersonRepository(); 
+												repo.deleteById(leaveId);
+
+												System.out.println("====================================");
+												System.out.println("☑️ 해당 ID는 탈퇴되었습니다 : "+leaveId);
+												System.out.println("====================================");
+												break;
+											case "n" :
+												System.out.println("회원 탈퇴 진행을 취소합니다");
+												break;
+											default :
+												System.out.println("❌ 다음을 입력해주세요: y 또는 n");
+												break;
+											}
+											break;
+											
+									case "0":
+										System.out.println("이전 화면으로 돌아갑니다.");
 										break;
-									}else {
+										
+									default:
 										System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
-									}
-								}
-							}else if (menu.equals("0")) {
-								break;
-							}else {
-								System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
-							}
-						}
-					}else {
+										break;
+									
+					}}}else {
 						// 일반 사용자 메뉴
 						while(true) {
 							System.out.println("╔════════════════════════════════════════════╗");
@@ -397,6 +512,8 @@ public class MainController_hhe {
 										
 										System.out.println("=====================================\n");
 									}else if (menu.equals("0")) {
+										
+										
 										break;
 									}else {
 										System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
@@ -600,6 +717,7 @@ public class MainController_hhe {
 						}
 					}
 					break;
+					}}
 				case "3":
 					//상품 둘러보기 메뉴
 					while(true) {
@@ -669,7 +787,7 @@ public class MainController_hhe {
 			}
 		}
 	}
+}
 
 
 		
-}

@@ -290,15 +290,18 @@ public class UserService {
 		}
 	}
 
-	// 모든 사용자 데이터 반환 (비밀번호 제외)
+
+	
+	// 모든 사용자 데이터 반환    -- toString에 비밀번호가 포함되어있지 않으므로, 비밀번호 *로 바꾸는 코드는 주석처리함
+
 	public List<Customer> getAllCustomers() {
 		List<Customer> customers = FileManagement.readFromFile(UserRepository.FILE_NAME);
 
-		// 비밀번호만 * 16자로 바꾸기
-		for (Customer customer : customers) {
-			customer.setPassword("*".repeat(16));
-
-		}
+//		// 비밀번호만 * 16자로 바꾸기
+//		for (Customer customer : customers) {
+//			customer.setPassword("*".repeat(16));
+//
+//		} 
 
 		return customers;
 	}

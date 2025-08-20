@@ -24,7 +24,7 @@ public static LoginController getInstance() {
     }
     return instance;
 }
-
+ 
 	public String login() {
 		System.out.println("=== 로그인 메뉴 ===");
 		

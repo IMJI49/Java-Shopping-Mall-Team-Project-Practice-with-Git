@@ -7,7 +7,6 @@ import java.util.List;
 import com.shoppingmall.models.Item;
 import com.shoppingmall.persistence.FileManagement;
 import com.shoppingmall.util.Constants;
-import com.shoppingmall.util.ValidationUtils;
 
 public class ProductRepository {
 	// delete method 생성

@@ -402,7 +402,10 @@ public class UserService {
 			break;
 		}
 	}
-	
+	public HashMap<String, Item> deleteItem(Item delItem){
+		items.remove(delItem.getItemID());
+		return items;
+	}
 	public HashMap<String, Item> getItems() {
 		return items;
 	}

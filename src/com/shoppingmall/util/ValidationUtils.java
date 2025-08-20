@@ -21,6 +21,11 @@ public class ValidationUtils {
 			throw new ValidationException(message);
 		}
 	}
+	public static void passwordValidation(String changePassword) throws ValidationException {
+		if (!changePassword.matches(".*[a-zA-Z].*") || !changePassword.matches(".*[0-9].*")) {
+            throw new ValidationException("비밀번호는 영문과 숫자를 모두 포함해야 합니다.");
+        }
+	}
 
 	public static void requireMinLength(String str, int minLeng, String message) throws ValidationException {
 		requireNotNullAndEmpty(str, message);

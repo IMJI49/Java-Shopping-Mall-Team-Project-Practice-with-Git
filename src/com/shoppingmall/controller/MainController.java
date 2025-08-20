@@ -36,22 +36,13 @@ public class MainController {
 		productRepository = new ProductRepository();
 		personRepository = new PersonRepository();
 	}
-	public static void main(String[] args)  {
-		MainController controller = new MainController();
-		controller.start();
-		
-	}
 	public void start() {
-		try {
-			showMainMenu();
-		} catch (ShoppingMallException e) {
-			
-			e.printStackTrace();
-		}
+		showMainMenu();
 	}
 	
 	//메인메뉴
-	private void showMainMenu() throws ShoppingMallException {
+	@SuppressWarnings("null")
+	private void showMainMenu() {
 		while(true) {
 			// 메인메뉴
 			Customer customer = null;
@@ -206,12 +197,16 @@ public class MainController {
 												System.out.println("\n======== 비밀번호 변경 ==========");
 												System.out.print("변경할 비밀번호를 입력해주세요: _");
 												String changePassword = scanner.nextLine();
+											try {
 												ValidationUtils.requireNotNullAndEmpty(changePassword, "비밀번호를 입력해 주세요.");
-										        ValidationUtils.requireMinLength(changePassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
+												ValidationUtils.requireMinLength(changePassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
 										        ValidationUtils.requireMaxLength(changePassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
-										        if (!changePassword.matches(".*[a-zA-Z].*") || !changePassword.matches(".*[0-9].*")) {
-										            throw new ValidationException("비밀번호는 영문과 숫자를 모두 포함해야 합니다.");
-										        }
+										        ValidationUtils.passwordValidation(changePassword);
+											} catch (ValidationException e) {
+												System.err.println(e.getLocalizedMessage());
+//												e.printStackTrace();
+											}
+										        
 										        userService.changePassword(customer, changePassword);
 												System.out.println("변경이 완료되었습니다.");
 												System.out.println("====================================\n");
@@ -220,7 +215,12 @@ public class MainController {
 												System.out.println("\n======== 개인정보 수정 ==========");
 												System.out.print("변경할 주소를 입력하세요: _");
 												String address = scanner.nextLine();
+											try {
 												userService.updateAddress(customer.getId(), menu, address);
+											} catch (ValidationException e) {
+												
+												e.printStackTrace();
+											}
 												System.out.print("변경할 이메일을 입력하세요: _");
 												String email = scanner.nextLine();
 												System.out.print("변경할 전화번호를 입력하세요: _");
@@ -238,7 +238,11 @@ public class MainController {
 									}while(!menu3.equals("0"));
 									break;
 								case "3":
+								try {
 									itemController(scanner);
+								} catch (ShoppingMallException e) {
+									System.err.println(e.getLocalizedMessage());
+								}
 								case "4":
 									// 관리자 사용자 관리 메뉴
 									do {
@@ -258,8 +262,8 @@ public class MainController {
 											case "1":
 												System.out.println("\n=======  전체 회원 조회  =========");
 												List<Customer> customerList = FileManagement.readFromFile(Constants.USER_DATA_FILE);
-										        for (Customer c : customerList) {
-										            System.out.println(customer.toString());
+										        for (Customer cu : customerList) {
+										            System.out.println(cu.toString());
 										        }
 												System.out.println("=================================\n");
 												break;
@@ -348,7 +352,12 @@ public class MainController {
 							switch(menu2) {
 								case "1":
 									// 상품 둘러보기 메뉴
+								try {
 									lookAroundGoods();
+								} catch (ValidationException e) {
+									System.err.println(e.getLocalizedMessage());
+//									e.printStackTrace();
+								}
 									break;
 								case "2":
 									//상품 검색
@@ -415,9 +424,15 @@ public class MainController {
 												System.out.print("변경할 전화번호를 입력하세요: _");
 												String phoneNumber = scanner.nextLine();
 												
+											try {
 												userService.updateAddress(customer.getId(), nowPassword, address);
 												userService.updateEmail(customer.getId(), nowPassword, email);
 												userService.updatePhone(customer.getId(), nowPassword, phoneNumber);
+											} catch (ValidationException e) {
+												System.err.println(e.getLocalizedMessage());
+//												e.printStackTrace();
+											}
+												
 												System.out.println("변경이 완료되었습니다.");
 												System.out.println("====================================\n");
 												break;
@@ -455,7 +470,12 @@ public class MainController {
 					break;
 				case "3":
 					//상품 둘러보기 메뉴
+				try {
 					lookAroundGoods();
+				} catch (ValidationException e) {
+					System.err.println(e.getLocalizedMessage());
+					e.printStackTrace();
+				}
 					break;
 				case "0":
 					return;

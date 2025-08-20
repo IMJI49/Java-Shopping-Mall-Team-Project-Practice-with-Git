@@ -10,7 +10,7 @@ public class LoginController {
 	private Scanner scanner;
 	private Person loggedInUser;
 	private boolean isLoggedIn;
-	
+	 
 private LoginController() {
 	this.scanner = new Scanner(System.in);
 	this.loggedInUser = null;

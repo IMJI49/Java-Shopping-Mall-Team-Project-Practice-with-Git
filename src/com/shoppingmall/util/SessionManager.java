@@ -1,7 +1,6 @@
 package com.shoppingmall.util;
 
-import com.shoppingmall.models.Customer;
-import com.shoppingmall.models.Manager;
+
 import com.shoppingmall.models.Person;
 
 public class SessionManager {
@@ -13,14 +12,8 @@ public class SessionManager {
 	private SessionManager() {
 		// 유틸리티 클래스이므로 인스턴스 생성 방지
 	}
-	public static Customer getCurrentUser() {
-		return (Customer) currentUser;
-	}
-	public static Manager getCurrentManager() {
-		return (Manager) currentUser;
-	}
-	public static void setCurrentUser(Customer currentUser) {
-		SessionManager.currentUser = currentUser;
+	public static Person getCurrentUser() {
+		return currentUser;
 	}
 	public static void setCurrentManager(Person currentUser) {
 		SessionManager.currentUser = currentUser;

@@ -59,7 +59,7 @@ public static LoginController getInstance() {
 	public void logout() {
 		if (isLoggedIn()) {
 			System.out.println(loggedInUser.getName() + "님이 로그아웃되었습니다.");
-			
+			 
 			this.loggedInUser = null;
 			this.isLoggedIn = false;
 			

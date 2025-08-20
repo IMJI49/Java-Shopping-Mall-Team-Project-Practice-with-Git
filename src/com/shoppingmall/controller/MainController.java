@@ -199,20 +199,25 @@ public class MainController {
 												break;
 											case "2":
 												System.out.println("\n======== 비밀번호 변경 ==========");
-												System.out.print("변경할 비밀번호를 입력해주세요: _");
-												String changePassword = scanner.nextLine();
-												try {
-													ValidationUtils.requireNotNullAndEmpty(changePassword, "비밀번호를 입력해 주세요.");
-													ValidationUtils.requireMinLength(changePassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
-											        ValidationUtils.requireMaxLength(changePassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
-											        ValidationUtils.passwordValidation(changePassword);
-												} catch (ValidationException e) {
-													System.err.println(e.getLocalizedMessage());
-	//												e.printStackTrace();
+												System.out.print("현재 비밀번호를 입력해주세요: _");
+												String nowPassword = scanner.nextLine();
+												
+												if(nowPassword.equals(manager.getPassword())) {
+													System.out.print("변경할 비밀번호를 입력해주세요: _");
+													String changePassword = scanner.nextLine();
+													try {
+														ValidationUtils.requireNotNullAndEmpty(changePassword, "비밀번호를 입력해 주세요.");
+														ValidationUtils.requireMinLength(changePassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
+												        ValidationUtils.requireMaxLength(changePassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
+												        ValidationUtils.passwordValidation(changePassword);
+													} catch (ValidationException e) {
+														System.err.println(e.getLocalizedMessage());
+		//												e.printStackTrace();
+													}
+											        
+											        manager.setPassword(changePassword);
+													System.out.println("변경이 완료되었습니다.");
 												}
-										        
-										        manager.setPassword(changePassword);
-												System.out.println("변경이 완료되었습니다.");
 												System.out.println("====================================\n");
 												break;
 											case "3":
@@ -422,8 +427,13 @@ public class MainController {
 												if(customer.getPassword().equals(nowPassword)) {
 													System.out.print("변경할 비밀번호를 입력해주세요: _");
 													String newPassword = scanner.nextLine();
-													
+							
 													try {
+														ValidationUtils.requireNotNullAndEmpty(newPassword, "비밀번호를 입력해 주세요.");
+														ValidationUtils.requireMinLength(newPassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
+												        ValidationUtils.requireMaxLength(newPassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
+												        ValidationUtils.passwordValidation(newPassword);
+														
 														userService.changePassword(customer.getId(), nowPassword, newPassword);
 													} catch (ValidationException e) {
 														e.printStackTrace();

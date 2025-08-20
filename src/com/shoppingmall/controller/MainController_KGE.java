@@ -71,7 +71,7 @@ public class MainController_KGE {
     }
 
     // 2. 사용자 장바구니 관리
-    public void cartManageMenu(String userId) {
+    public void cartManageMenu(Customer customer) {
         while(true) {
             System.out.println("┌────────────────────────────────────┐");
             System.out.println("│         🛒 장바구니 관리               │");
@@ -85,6 +85,7 @@ public class MainController_KGE {
             System.out.println("└────────────────────────────────────┘");
             System.out.print("메뉴를 선택하세요: _");
             String menu = scanner.nextLine();
+            String userId = customer.getId();
             ArrayList<CartItem> cartItems = userService.getCarts().get(userId);
             switch(menu) {
                 case "1":
@@ -100,16 +101,11 @@ public class MainController_KGE {
                 case "2":
                     System.out.print("추가할 상품의 이름을 입력해주세요: _");
                     String pName = scanner.nextLine();
-                    Item item = userService.getItembyName(pName);
-                    if(item == null) {
-                        System.out.println("존재하지 않는 상품입니다.");
-                        break;
-                    }
                     System.out.print("추가 수량을 입력하세요: ");
                     try {
-                        int qty = Integer.parseInt(scanner.nextLine());
-                        userService.getCarts().putIfAbsent(userId, new ArrayList<CartItem>());
-                        userService.getCarts().get(userId).add(new CartItem(item, qty));
+                    	int qty = Integer.parseInt(scanner.nextLine().trim().replaceAll("개., ", ""));
+                        // ★ addCart 사용
+                        userService.addCart(customer, pName, qty);
                         System.out.println("장바구니에 상품이 추가되었습니다.");
                     } catch(Exception e) {
                         System.out.println("추가 실패: " + e.getMessage());
@@ -124,13 +120,14 @@ public class MainController_KGE {
                             if(ci.getItem().getName().equals(targetName)) {
                                 System.out.print("새 수량을 입력하세요: ");
                                 try {
-                                    int newQty = Integer.parseInt(scanner.nextLine());
+                                	int newQty = Integer.parseInt(scanner.nextLine().trim().replaceAll("개., ", ""));
                                     if(newQty <= 0) {
                                         System.out.println("수량은 1 이상이어야 합니다.");
                                         break;
                                     }
+                                    // ★ addCart 사용: 먼저 해당 상품을 삭제한 뒤, 새롭게 추가
                                     cartItems.remove(ci);
-                                    cartItems.add(new CartItem(ci.getItem(), newQty));
+                                    userService.addCart(customer, targetName, newQty);
                                     System.out.println("수량이 변경되었습니다.");
                                     found = true;
                                     break;

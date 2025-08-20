@@ -190,43 +190,56 @@ public class MainController {
 											case "1":
 												//내 정보 조회
 												System.out.println("\n========  내 정보 조회  ==========");
-												System.out.println(manager);
+												System.out.print("정보를 조회하기 전에 비밀번호를 입력하세요: _");
+												String infoPassword = scanner.nextLine();
+												
+												if(infoPassword.equals(manager.getPassword()))
+													System.out.println(manager);
 												System.out.println("===============================\n");
 												break;
 											case "2":
 												System.out.println("\n======== 비밀번호 변경 ==========");
-												System.out.print("변경할 비밀번호를 입력해주세요: _");
-												String changePassword = scanner.nextLine();
-											try {
-												ValidationUtils.requireNotNullAndEmpty(changePassword, "비밀번호를 입력해 주세요.");
-												ValidationUtils.requireMinLength(changePassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
-										        ValidationUtils.requireMaxLength(changePassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
-										        ValidationUtils.passwordValidation(changePassword);
-											} catch (ValidationException e) {
-												System.err.println(e.getLocalizedMessage());
-//												e.printStackTrace();
-											}
-										        
-										        userService.changePassword(customer, changePassword);
-												System.out.println("변경이 완료되었습니다.");
+												System.out.print("현재 비밀번호를 입력해주세요: _");
+												String nowPassword = scanner.nextLine();
+												
+												if(nowPassword.equals(manager.getPassword())) {
+													System.out.print("변경할 비밀번호를 입력해주세요: _");
+													String changePassword = scanner.nextLine();
+													try {
+														ValidationUtils.requireNotNullAndEmpty(changePassword, "비밀번호를 입력해 주세요.");
+														ValidationUtils.requireMinLength(changePassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
+												        ValidationUtils.requireMaxLength(changePassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
+												        ValidationUtils.passwordValidation(changePassword);
+													} catch (ValidationException e) {
+														System.err.println(e.getLocalizedMessage());
+		//												e.printStackTrace();
+													}
+											        
+											        manager.setPassword(changePassword);
+													System.out.println("변경이 완료되었습니다.");
+												}
 												System.out.println("====================================\n");
 												break;
 											case "3":
 												System.out.println("\n======== 개인정보 수정 ==========");
-												System.out.print("변경할 주소를 입력하세요: _");
-												String address = scanner.nextLine();
-											try {
-												userService.updateAddress(customer.getId(), menu, address);
-											} catch (ValidationException e) {
+												System.out.print("개인정보를 수정하기 전에 패스워드를 입력해주세요: _");
+												String updatePassword = scanner.nextLine();
 												
-												e.printStackTrace();
-											}
-												System.out.print("변경할 이메일을 입력하세요: _");
-												String email = scanner.nextLine();
-												System.out.print("변경할 전화번호를 입력하세요: _");
-												String phoneNumber = scanner.nextLine();
+												if(updatePassword.equals(manager.getPassword())) {
+													System.out.print("변경할 주소를 입력하세요: _");
+													String address = scanner.nextLine();
+													System.out.print("변경할 이메일을 입력하세요: _");
+													String email = scanner.nextLine();
+													System.out.print("변경할 전화번호를 입력하세요: _");
+													String phoneNumber = scanner.nextLine();
 												
-												System.out.println("변경이 완료되었습니다.");
+													manager.setAddress(address);
+													manager.setEmail(email);
+													manager.setPhoneNumber(phoneNumber);																										
+													
+													System.out.println("변경이 완료되었습니다.");
+												}
+												
 												System.out.println("====================================\n");
 												break;
 											case "0":
@@ -398,42 +411,62 @@ public class MainController {
 										switch(menu3) {
 											case "1":
 												System.out.println("\n======== 내 정보 조회 ========");
-												System.out.print("비밀번호를 입력해주세요. : ");
+												System.out.print("비밀번호를 입력해주세요: _ ");
 												String nowPassword = scanner.nextLine();
-												System.out.println(SessionManager.getCurrentUser().toString());
+												
+												if(customer.getPassword().equals(nowPassword))
+													System.out.println(SessionManager.getCurrentUser().toString());
 												System.out.println("==============================\n");
 												break;
 												
 											case "2":
 												System.out.println("\n======== 비밀번호 변경  ========");
+												System.out.print("현재 비밀번호를 입력해주세요: _");
 												nowPassword = scanner.nextLine();
-												System.out.print("변경할 비밀번호를 입력해주세요: _");
-												String changePassword = scanner.nextLine();
 												
-												System.out.println("비밀번호가 변경되었습니다!");
+												if(customer.getPassword().equals(nowPassword)) {
+													System.out.print("변경할 비밀번호를 입력해주세요: _");
+													String newPassword = scanner.nextLine();
+							
+													try {
+														ValidationUtils.requireNotNullAndEmpty(newPassword, "비밀번호를 입력해 주세요.");
+														ValidationUtils.requireMinLength(newPassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
+												        ValidationUtils.requireMaxLength(newPassword, 20, "비밀번호는 최대 20자 이하여야 합니다.");
+												        ValidationUtils.passwordValidation(newPassword);
+														
+														userService.changePassword(customer.getId(), nowPassword, newPassword);
+													} catch (ValidationException e) {
+														e.printStackTrace();
+													}
+													System.out.println("비밀번호가 변경되었습니다!");
+												}
 												System.out.println("================================\n");
 												break;
 												
 											case "3":
 												System.out.println("\n======== 개인정보를 변경합니다 ==========");
+												System.out.print("비밀번호를 입력해주세요: _");
 												nowPassword = scanner.nextLine();
-												System.out.print("변경할 주소를 입력하세요: _");
-												String address = scanner.nextLine();
-												System.out.print("변경할 이메일을 입력하세요: _");
-												String email = scanner.nextLine();
-												System.out.print("변경할 전화번호를 입력하세요: _");
-												String phoneNumber = scanner.nextLine();
 												
-											try {
-												userService.updateAddress(customer.getId(), nowPassword, address);
-												userService.updateEmail(customer.getId(), nowPassword, email);
-												userService.updatePhone(customer.getId(), nowPassword, phoneNumber);
-											} catch (ValidationException e) {
-												System.err.println(e.getLocalizedMessage());
-//												e.printStackTrace();
-											}
-												
-												System.out.println("변경이 완료되었습니다.");
+												if(customer.getPassword().equals(nowPassword)) {
+													System.out.print("변경할 주소를 입력하세요: _");
+													String address = scanner.nextLine();
+													System.out.print("변경할 이메일을 입력하세요: _");
+													String email = scanner.nextLine();
+													System.out.print("변경할 전화번호를 입력하세요: _");
+													String phoneNumber = scanner.nextLine();
+													
+													try {
+														userService.updateAddress(customer.getId(), nowPassword, address);
+														userService.updateEmail(customer.getId(), nowPassword, email);
+														userService.updatePhone(customer.getId(), nowPassword, phoneNumber);
+													} catch (ValidationException e) {
+														System.err.println(e.getLocalizedMessage());
+		//												e.printStackTrace();
+													}
+													
+													System.out.println("변경이 완료되었습니다.");
+												}
 												System.out.println("====================================\n");
 												break;
 												

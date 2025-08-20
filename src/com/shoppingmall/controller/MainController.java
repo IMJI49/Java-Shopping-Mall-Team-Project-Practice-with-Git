@@ -36,9 +36,18 @@ public class MainController {
 		productRepository = new ProductRepository();
 		personRepository = new PersonRepository();
 	}
-
-	public void start() throws ShoppingMallException {
-		showMainMenu();
+	public static void main(String[] args)  {
+		MainController controller = new MainController();
+		controller.start();
+		
+	}
+	public void start() {
+		try {
+			showMainMenu();
+		} catch (ShoppingMallException e) {
+			
+			e.printStackTrace();
+		}
 	}
 	
 	//메인메뉴
@@ -147,21 +156,9 @@ public class MainController {
 					break;
 				case "2":
 					LoginController loginController = LoginController.getInstance();
-					String userRole = loginController.login();
-				    
-				    if(userRole != null) {
-				        System.out.println("====================================\n");
-				        
-				        if(userRole.equals("관리자")) {
-				            // 관리자 로그인 메뉴 여기에 넣어주세요
-				        } else {
-				            // 일반 사용자 메뉴 여기에 넣어주세요
-				        }
-				    }
-				    Person currentUser;
+				    Person currentUser = loginController.getLoggedInUser();
 				    //로그인 실패
 				    SessionManager.setCurrentManager(currentUser);
-				    break;
 					if(SessionManager.getCurrentUser().getRole().equals("관리자")) {
 						manager = (Manager) currentUser;
 						// 관리자 로그인 메뉴
@@ -311,8 +308,8 @@ public class MainController {
 														System.out.println("❌ 다음을 입력해주세요: y 또는 n");
 														break;
 													}
+													System.out.println("====================================");
 													break;
-												System.out.println("====================================");
 											case "0":
 												break;
 											default:
@@ -400,6 +397,7 @@ public class MainController {
 												
 											case "2":
 												System.out.println("\n======== 비밀번호 변경  ========");
+												nowPassword = scanner.nextLine();
 												System.out.print("변경할 비밀번호를 입력해주세요: _");
 												String changePassword = scanner.nextLine();
 												
@@ -409,6 +407,7 @@ public class MainController {
 												
 											case "3":
 												System.out.println("\n======== 개인정보를 변경합니다 ==========");
+												nowPassword = scanner.nextLine();
 												System.out.print("변경할 주소를 입력하세요: _");
 												String address = scanner.nextLine();
 												System.out.print("변경할 이메일을 입력하세요: _");

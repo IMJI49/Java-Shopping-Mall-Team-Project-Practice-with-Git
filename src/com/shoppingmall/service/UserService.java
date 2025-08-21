@@ -53,7 +53,7 @@ public class UserService {
 	protected HashMap<ArrayList<String>, String> review; // ItemID, String Review
 	protected LocalDateTime shippingDate; // 배송 완료 날짜
 	protected String mallName;
-	
+	public static int size;
 	public UserService(String mallName) {
 		this.mallName = mallName;
 		items = new HashMap<String, Item>();
@@ -75,6 +75,7 @@ public class UserService {
 			carts.put(customer.getId(), new ArrayList<CartItem>());
 		}
 		review = new HashMap<ArrayList<String>, String>();
+		size = items.size();
 	}
 	public void addCart(Customer customer,String itemName, int quantity) throws ShoppingMallException {
 		Item item = null;
@@ -90,6 +91,7 @@ public class UserService {
 	public void userRegister(Customer customer) {
 		customers.put(customer.getId(), customer);
 		carts.put(customer.getId(), new ArrayList<CartItem>());
+		FileManagement.writeToFile(PersonRepository.FILE_NAME_CUSTOMER, customers.values().stream().toList());
 	}
 	public void placeOrder(Customer customer, String shipAddress) throws CustomerNotFoundException, ValidationException {
 		ValidationUtils.requireNotNullCustomer(customer, customer.getId());
@@ -169,7 +171,10 @@ public class UserService {
         System.out.println("해당 ID의 상품을 찾을 수 없습니다.");
     }
 
-    
+    public void deleteUser(Customer customer) {
+    	customers.remove(customer.getId());
+    	FileManagement.writeToFile(Constants.USER_DATA_FILE, customers.values().stream().toList());
+    }
 
 	// 리뷰 안내 (배송 완료 후 1회만)
 	public void promptReview(Status status, String orderID) {

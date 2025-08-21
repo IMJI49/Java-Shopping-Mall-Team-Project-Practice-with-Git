@@ -17,14 +17,27 @@ public class Item implements Serializable {
 	private int price;
 	private int quantity;
 	private String description;
-	private static int idNum = 1;
 //	private double rating;
 	private ArrayList<Double> rating;
 	private ArrayList<String> review;
 	private int sellCount;
 	private LocalDate regidate;
-
+	private static int idNum = 1;
+	
 	public Item(String name, String category, int price, int quantity, String description) {
+		itemID = "P" + String.format("%04d", idNum);
+		this.name = name;
+		this.category = category;
+		this.price = price;
+		this.quantity = quantity;
+		this.description = description;
+		idNum++;
+		rating = new ArrayList<Double>();
+		review = new ArrayList<String>();
+		regidate = LocalDate.now();
+	}
+	
+	public Item(String name, String category, int price, int quantity, String description,int idNum) {
 		itemID = "P" + String.format("%04d", idNum);
 		this.name = name;
 		this.category = category;

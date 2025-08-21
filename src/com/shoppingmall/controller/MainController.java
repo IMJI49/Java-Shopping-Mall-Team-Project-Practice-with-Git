@@ -32,8 +32,8 @@ public class MainController {
 
 	public MainController() {
 		this.scanner = new Scanner(System.in);
-		userService = new UserService("Java Shopping Mall");
-		managerService = (ManagerService) userService;
+		managerService = new ManagerService("Java Shopping Mall");
+		userService = managerService;
 		productRepository = new ProductRepository();
 		personRepository = new PersonRepository();
 	}
@@ -140,8 +140,7 @@ public class MainController {
 					Customer newMember = new Customer(memberId, memberPassword, memberName, memberAddress, memberEmail,
 							memberPhone);
 					// 저장까지 하기!
-					personRepository.savePerson(newMember);
-					userService.userRegister(customer);
+					userService.userRegister(newMember);
 					System.out.println("✅ 회원가입이 완료되었습니다!");
 
 				} catch (ValidationException e) {
@@ -338,8 +337,7 @@ public class MainController {
 
 									switch (yesOrNo) {
 									case "y":
-										PersonRepository repo = new PersonRepository();
-										repo.deleteById(leaveId);
+										userService.deleteUser(userService.getCustomers().get(leaveId));
 										System.out.println("====================================");
 										System.out.println("☑️ 해당 ID는 탈퇴되었습니다 : " + leaveId);
 										System.out.println("====================================");
@@ -522,6 +520,9 @@ public class MainController {
 									if (!userService.passwordCheck(customer, infoPassword)) {
 										continue;
 									}
+									userService.deleteUser(customer);
+									menu3="0";
+									menu2="0";
 									System.out.println("===================================\n");
 									break;
 
@@ -848,7 +849,7 @@ public class MainController {
 				int quantity = Integer.parseInt(sQuantity);
 				System.out.print("상품 설명을 입력해 주세요: ");
 				String description = scanner.nextLine();
-				Item newItem = new Item(name, category, price, quantity, description);
+				Item newItem = new Item(name, category, price, quantity, description,userService.getItems().size()+1);
 				FileManagement.writeToFile(Constants.PRODUCT_DATA_FILE,
 						userService.registItem(newItem).values().stream().toList());
 				System.out.println("상품이 등록되었습니다!");

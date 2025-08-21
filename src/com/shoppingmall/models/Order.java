@@ -30,7 +30,16 @@ public class Order {
         reviewPromptShown = false;
         this.shippingAddress =  customer.getAddress();
 	}
-
+    public Order(Customer customer, ArrayList<CartItem> cartItems, int orderSeq) {
+    	this.orderID = "O" + String.format("%08d", orderSeq++);
+        this.customer = customer;
+        this.orderDate = LocalDateTime.now();
+        this.status = Status.PENDING;
+        this.cartItems = new ArrayList<>(cartItems);
+        this.totalAmount = calculateTotal();
+        reviewPromptShown = false;
+        this.shippingAddress =  customer.getAddress();
+	}
 	// 생성자
     public Order(Customer customer, ArrayList<CartItem> cartItems, String shippingAddress) {
         this.orderID = "O" + String.format("%08d", orderSeq++);

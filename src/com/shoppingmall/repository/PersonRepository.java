@@ -1,6 +1,8 @@
 package com.shoppingmall.repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import com.shoppingmall.models.Customer;
@@ -35,10 +37,13 @@ public class PersonRepository {
     }
 
     // 회원 저장 메서드 - Customer, Manager 모두 저장 가능
-    public Person savePerson(Person person) {
+    @SuppressWarnings("unchecked")
+	public Person savePerson(Person person) {
         if (person instanceof Customer) {
             List<Customer> customers = FileManagement.readFromFile(Constants.USER_DATA_FILE);
+            customers.addAll((Collection<? extends Customer>) Arrays.asList(customers));
             customers.add((Customer) person);
+            customers = new ArrayList<Customer>(customers);
             FileManagement.writeToFile(Constants.USER_DATA_FILE, customers);
         } else if (person instanceof Manager) {
             List<Manager> managers = FileManagement.readFromFile(Constants.MANAGER_DATA_FILE);

@@ -16,7 +16,10 @@ import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;
 import com.shoppingmall.models.Order;
 import com.shoppingmall.models.Order.Status;
+import com.shoppingmall.models.Person;
 import com.shoppingmall.persistence.FileManagement;
+import com.shoppingmall.repository.OrderRepository;
+import com.shoppingmall.repository.PersonRepository;
 import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.repository.UserRepository;
 import com.shoppingmall.util.ValidationUtils;
@@ -58,12 +61,12 @@ public class UserService {
 			items.put(item.getItemID(), item);
 		}
 		customers = new HashMap<String, Customer>();
-		List<Customer> customerList = FileManagement.readFromFile(UserRepository.FILE_NAME);
+		List<Customer> customerList = FileManagement.readFromFile(PersonRepository.FILE_NAME_CUSTOMER);
 		for (Customer customer : customerList) {
 			customers.put(customer.getId(), customer);
 		}
 		orders = new HashMap<String, Order>();
-		List<Order> orderList = FileManagement.readFromFile(UserRepository.FILE_NAME);
+		List<Order> orderList = FileManagement.readFromFile(OrderRepository.FILE_NAME);
 		for (Order order : orderList) {
 			orders.put(order.getOrderID(), order);
 		}
@@ -440,6 +443,12 @@ public class UserService {
 		Order order = orders.get(customer.getId());
 		customer.addPoint(order);
 	}
-
+	public boolean passwordCheck(Person user, String password) {
+		if (!password.equals(user.getPassword())) {
+			System.out.println("비밀번호가 틀립니다.");
+			return false;
+		}
+		return true;
+	}
 
 }

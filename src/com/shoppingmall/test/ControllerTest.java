@@ -1,17 +1,16 @@
 package com.shoppingmall.test;
 
-import com.shoppingmall.controller.MainController;
+import com.shoppingmall.exception.ShoppingMallException;
 import com.shoppingmall.models.Item;
 import com.shoppingmall.repository.ProductRepository;
 
 public class ControllerTest {
 	private static ProductRepository productRepository = new ProductRepository();
 	
-	public static void main(String[] args) {
-		MainController controller = new MainController();
-		
+	public static void main(String[] args) throws ShoppingMallException {
 		initialItems();
-		controller.start();
+		newItem();
+		
 	}
 
 	private static void initialItems() {
@@ -95,7 +94,7 @@ public class ControllerTest {
 		productRepository.save(new Item("[PG5 이형그립형] 티타늄 샤프", "기타", 200000, 6585, "바디에 서로 다른 재로 또는 다양한 형태의 그립을 결합하여 이질감 없이 제작한 투원우드만의 샤프 펜슬 디자인, 티타늄을 사용하여 내식성이 우수하며 독성이 없어 안정성 높은 샤프"));
 		productRepository.save(new Item("쿠루토가메탈 유니쿠루토가다이브 신제품 수능샤프 M5-KH", "기타", 437200, 378, "미츠비시 팬슬  Uni의 쿠루토가 메탈 샤프 0.5mm"));
 		productRepository.save(new Item("퓨어케이 판테놀 10% 시카 리페어 피부 장벽 진정 크림 80ml, 1개", "기타", 17900, 1159, "손상된 피부 장박 개선용 진정 크림"));
-		productRepository.save(new Item("마스터킹 철봉 치닝디핑 가정용 턱걸이 운동기구 홈트레이닝 기구 실내 풀업바 머신", "기타", 59500, 815, "도시 유해 환경의 자극 속에도 하루종일 빈틈없는 5중 방어막 형성\r\n"
+		productRepository.save(new Item("썬크림", "기타", 59500, 815, "도시 유해 환경의 자극 속에도 하루종일 빈틈없는 5중 방어막 형성\r\n"
 				+ "고급스러운 피부 톤업으로 생기까지 채우는 상백톤업 썬크림"));
 		productRepository.save(new Item("마스터킹 철봉 치닝디핑 가정용 턱걸이 운동기구 홈트레이닝 기구 실내 풀업바 머신", "기타", 202000, 3420, "설치가 걱정이되시면 추가 옵션으로 방문 설치가 있습니다.\r\n"
 				+ "1115*2250"));
@@ -114,6 +113,9 @@ public class ControllerTest {
 				+ "꽃가루형 세단으로 문서의 내용을 유추하기 어렵게 세단합니다."));
 		
 		//랜덤
+		
+	}
+	private static void newItem() {
 		productRepository.save(new Item("삼성전자 S43FM701 스마트모니터 M7 M70F 107.9cm(43인치) 4K UHD 화이트", "전자 제품", 579000, 1918, "디스플레이크기 (대각선) : 107.9cm, 스탠드포함 (가로x높이x깊이) : 965.5 x 629.3 x 247.2 mm, 스탠드제외 (가로x높이x깊이) : 965.5 x 559.8 x 25.7 mm, 포장 (가로x높이x깊이) : 1198 x 677 x 159 mm,"));
 		productRepository.save(new Item("닌텐도 스위치 2 마리오카트 세트 월드 본체", "전자 제품", 687000, 5182, "캐릭터의 복잡한 움직임과 끝없이 펼처진 세계\r\n"
 				+ "CPU 및 GPU의 성능이 닌텐도 스위치 전작 대비 크게 향상. 처리 속도도 빨라져 새로운 플레이 및 표현이 가능해졌습니다."));
@@ -125,7 +127,6 @@ public class ControllerTest {
 				+ "S~XL사이즈 구비"));
 		productRepository.save(new Item("혼모노", "도서", 16200, 5176, "작품마다 치밀한 취재와 정교한 구성을 바탕으로 한 개성적인 캐릭터와 강렬하고도 서늘한 서사로 평단과 독자의 주목을 고루 받으며 새로운 세대의 리얼리즘을 열어가고 있다 평가받는 작가 성해나가 두번째 소설집 『혼모노』를 선보인다."));
 	}
-
 }
 
 	

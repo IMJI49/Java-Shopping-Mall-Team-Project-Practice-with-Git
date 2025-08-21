@@ -13,8 +13,9 @@ import com.shoppingmall.models.Manager;
 import com.shoppingmall.models.Order;
 import com.shoppingmall.models.Order.Status;
 import com.shoppingmall.persistence.FileManagement;
+import com.shoppingmall.repository.OrderRepository;
+import com.shoppingmall.repository.PersonRepository;
 import com.shoppingmall.repository.ProductRepository;
-import com.shoppingmall.repository.UserRepository;
 import com.shoppingmall.util.ValidationUtils;
 
 public class ManagerService extends UserService {
@@ -55,13 +56,17 @@ public class ManagerService extends UserService {
 			items.put(item.getItemID(), item);
 		}
 		customers = new HashMap<String, Customer>();
-		List<Customer> customerList = FileManagement.readFromFile(UserRepository.FILE_NAME);
+		List<Customer> customerList = FileManagement.readFromFile(PersonRepository.FILE_NAME_CUSTOMER);
 		for (Customer customer : customerList) {
 			customers.put(customer.getId(), customer);
 		}
 		managers = new HashMap<String, Manager>();
+		List<Manager> managerList = FileManagement.readFromFile(PersonRepository.FILE_NAME_MANAGER);
+		for (Manager manager : managerList) {
+			managers.put(manager.getId(), manager);
+		}
 		orders = new HashMap<String, Order>();
-		List<Order> orderList = FileManagement.readFromFile(UserRepository.FILE_NAME);
+		List<Order> orderList = FileManagement.readFromFile(OrderRepository.FILE_NAME);
 		for (Order order : orderList) {
 			orders.put(order.getOrderID(), order);
 		}

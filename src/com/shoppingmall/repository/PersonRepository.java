@@ -11,7 +11,8 @@ import com.shoppingmall.persistence.FileManagement;
 import com.shoppingmall.util.Constants;
  
 public class PersonRepository {
-
+	public static final String FILE_NAME_CUSTOMER = Constants.USER_DATA_FILE;
+	public static final String FILE_NAME_MANAGER = Constants.MANAGER_DATA_FILE;
     // 통합 인증 메서드 - Manager와 Customer 파일 모두 확인
     public static String authenticate(String id, String password) {
         // Manager에서 확인

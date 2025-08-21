@@ -25,12 +25,24 @@ public class Customer extends Person {
 	public boolean couponUse(String type) {
 		switch (type) {
 		case "A":
+			if(coupons[0] == false) {
+				System.out.println("이미 사용한 쿠폰입니다.");
+				return false;
+			}
 			coupons[0] = false;
 			return true;
 		case "B":
+			if(coupons[1] == false) {
+				System.out.println("이미 사용한 쿠폰입니다.");
+				return false;
+			}
 			coupons[1] = false;
 			return true;
 		case "C":
+			if(coupons[2] == false) {
+				System.out.println("이미 사용한 쿠폰입니다.");
+				return false;
+			}
 			coupons[2] = false;
 			return true;
 		default:
@@ -41,7 +53,9 @@ public class Customer extends Person {
 	public void addPoint(Order order) {
 		point += (int) (order.getTotalAmount() * 0.05);
 	}
-
+	public void minusPoint(Order order) {
+		point -= (int) (order.getTotalAmount() * 0.05);
+	}
 	public int getPoint() {
 		return point;
 	}
@@ -80,7 +94,7 @@ public class Customer extends Person {
 
 	@Override
 	public String toString() {
-		return String.format("이름 : %s, id : %s, 주소 : %s, 전화번호 : %s", name, id, address, phoneNumber);
+		return String.format("이름 : %s, id : %s, 주소 : %s, 전화번호 : %s, 포인트 : %,dp", name, id, address, phoneNumber,point);
 	}
 
 }

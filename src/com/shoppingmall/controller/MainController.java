@@ -51,7 +51,7 @@ public class MainController {
 			System.out.println("╔════════════════════════════════════════════╗");
 			System.out.println("║     🛍️  " + userService.getMallName() + "                 ║");
 			System.out.println("╚════════════════════════════════════════════╝");
-			System.out.println("1.  회원가입");
+			System.out.println("1. 회원가입");
 			System.out.println("2. 로그인");
 			System.out.println("3. 상품 둘러보기");
 			System.out.println("0. 프로그램 종료");
@@ -140,6 +140,7 @@ public class MainController {
 							memberPhone);
 					// 저장까지 하기!
 					personRepository.savePerson(newMember);
+					userService.userRegister(customer);
 					System.out.println("✅ 회원가입이 완료되었습니다!");
 
 				} catch (ValidationException e) {
@@ -214,6 +215,7 @@ public class MainController {
 									}
 									System.out.print("변경할 비밀번호를 입력해주세요: ");
 									String changePassword = scanner.nextLine();
+									managerService.changePassword(manager, changePassword);
 									try {
 										ValidationUtils.requireNotNullAndEmpty(changePassword, "비밀번호를 입력해 주세요.");
 										ValidationUtils.requireMinLength(changePassword, 8, "비밀번호는 최소 8자 이상이어야 합니다.");
@@ -224,7 +226,7 @@ public class MainController {
 //												e.printStackTrace();
 									}
 
-									userService.changePassword(customer, changePassword);
+									
 									System.out.println("변경이 완료되었습니다.");
 									System.out.println("====================================\n");
 									break;
@@ -398,14 +400,12 @@ public class MainController {
 							// 상품 검색
 							System.out.print("검색할 상품의 상품명을 입력해주세요: ");
 							String name = scanner.nextLine();
-							List<Item> items =  userService.findByName(name);
-							for (Item item : items) {
-								System.out.println(item);
-							}
+							@SuppressWarnings("unused") List<Item> items =  userService.findByName(name);
 							break;
 						case "3":
 							// 장바구니 관리
 							cartManageMenu(customer);
+							break;
 						case "4":
 							// 주문하기
 							System.out.println("\n===============  주문하기 ================");
@@ -704,16 +704,16 @@ public class MainController {
 					}
 				}
 				break;
-			case "2":
-				System.out.print("추가할 상품의 이름을 입력해주세요: ");
-				String pName = scanner.nextLine();
-				Item item = userService.getItembyName(pName);
-				if (item == null) {
-					System.out.println("존재하지 않는 상품입니다.");
-					break;
-				}
-				System.out.print("추가 수량을 입력하세요: ");
+			case "2" :
 				try {
+					System.out.print("추가할 상품의 이름을 입력해주세요: ");
+					String pName = scanner.nextLine().trim();
+					Item item = userService.getItembyName(pName);
+					if (item == null) {
+						System.out.println("존재하지 않는 상품입니다.");
+						break;
+					}
+					System.out.print("추가 수량을 입력하세요: ");
 					int qty = Integer.parseInt(scanner.nextLine().trim().replaceAll("개., ", ""));
 					userService.addCart(customer, pName, qty);
 					System.out.println("장바구니에 상품이 추가되었습니다.");
@@ -780,7 +780,14 @@ public class MainController {
 		try {
 			System.out.print("배송지를 변경하시겠습니까? y/n:");
 			String changeAddressboolean = scanner.nextLine();
-			if (changeAddressboolean.toLowerCase() == "n") {
+			if (changeAddressboolean.toLowerCase().equals("n")) {
+				System.out.print("쿠폰을 사용하시겠습니까? : ");
+				String couponuses = scanner.nextLine().trim();
+				if (couponuses.toLowerCase().equals("y")) {
+					System.out.print("쿠폰 종류 : A(10%할인), B(5%할인), C(1%할인) 각 쿠폰은 1회만 사용 가능합니다.\n사용하실 쿠폰 타입을 입력해주세요 : ");
+					String couponType = scanner.nextLine().toUpperCase().trim();
+					userService.couponUse(customer, couponType);
+				}
 				userService.placeOrder(customer);
 				System.out.println("주문이 정상적으로 완료되었습니다.");
 				return;

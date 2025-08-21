@@ -62,21 +62,23 @@ public class UserService {
 		}
 		customers = new HashMap<String, Customer>();
 		List<Customer> customerList = FileManagement.readFromFile(PersonRepository.FILE_NAME_CUSTOMER);
-		for (Customer customer : customerList) {
-			customers.put(customer.getId(), customer);
-		}
+		
 		orders = new HashMap<String, Order>();
 		List<Order> orderList = FileManagement.readFromFile(OrderRepository.FILE_NAME);
 		for (Order order : orderList) {
 			orders.put(order.getOrderID(), order);
 		}
 		carts = new HashMap<String, ArrayList<CartItem>>();
+		for (Customer customer : customerList) {
+			customers.put(customer.getId(), customer);
+			carts.put(customer.getId(), new ArrayList<CartItem>());
+		}
 		review = new HashMap<ArrayList<String>, String>();
 	}
 	public void addCart(Customer customer,String itemName, int quantity) throws ShoppingMallException {
 		Item item = null;
 		for (Item it : items.values()) {
-			if (it.getName() == itemName) {
+			if (it.getName().equals(itemName)) {
 				item = it;
 			}
 		}
@@ -84,7 +86,10 @@ public class UserService {
 		CartItem cartItem = new CartItem(item, quantity);
 		carts.get(customer.getId()).add(cartItem);
 	}
-
+	public void userRegister(Customer customer) {
+		customers.put(customer.getId(), customer);
+		carts.put(customer.getId(), new ArrayList<CartItem>());
+	}
 	public void placeOrder(Customer customer, String shipAddress) throws CustomerNotFoundException, ValidationException {
 		ValidationUtils.requireNotNullCustomer(customer, customer.getId());
 		ArrayList<CartItem> cartItems = carts.get(customer.getId());
@@ -107,7 +112,7 @@ public class UserService {
 	    }
 	    Order order = new Order(customer, cartItems);
 	    orders.put(order.getOrderID(), order);
-
+	    customer.addPoint(order);
 	    System.out.printf("주문 완료! 주문번호: %s, 총액: %,d원\n", order.getOrderID(), order.getTotalAmount());
 	}
 
@@ -123,6 +128,7 @@ public class UserService {
 		if (status != Status.PENDING)
 			throw new ValidationException("PENDING 상태에서만 취소 가능합니다.");
 		status = Status.CANCELLED;
+		
 		System.err.printf("⚠ 주문 [%s]가 취소되었습니다./n", orderID);
 	}
 
@@ -160,7 +166,7 @@ public class UserService {
 
 	public Item getItembyName(String name) {
 		for (Item item : items.values()) {
-			if (item.getName() == name) {
+			if (item.getName().equals(name)) {
 				return item;
 			}
 		}
@@ -176,7 +182,7 @@ public class UserService {
 	}
 	public void findNewItem() {
 		for (Item item : items.values()) {
-			if (ChronoUnit.DAYS.between(LocalDateTime.now(), item.getRegidate()) < 3) {
+			if (ChronoUnit.DAYS.between(item.getRegidate(),LocalDateTime.now()) < 3) {
 				System.out.println(item);
 			}
 		}
@@ -221,21 +227,21 @@ public class UserService {
 		switch (option) {
 			case 1: {
 				minPrice = 0;
-				maxPrice = 9999;
+				maxPrice = 29999;
 				break;
 			}
 			case 2: {
-				minPrice = 10000;
-				maxPrice = 49999;
+				minPrice = 30001;
+				maxPrice = 100000;
 				break;
 			}
 			case 3: {
-				minPrice = 50000;
-				maxPrice = 99999;
+				minPrice = 100001;
+				maxPrice = 500000;
 				break;
 			}
 			case 4: {
-				minPrice = 100000;
+				minPrice = 500001;
 				maxPrice = Integer.MAX_VALUE;
 				break;
 			}
@@ -396,7 +402,9 @@ public class UserService {
 	}
 
 	public void couponUse(Customer customer, String type) {
-		customer.couponUse(type);
+		if(customer.couponUse(type)) {
+			return;
+		}
 		ArrayList<CartItem> cartItems = carts.get(customer.getId());
 		switch (type) {
 		case "A":

@@ -1,5 +1,8 @@
 package com.shoppingmall.test;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import com.shoppingmall.exception.ShoppingMallException;
 import com.shoppingmall.models.Item;
 import com.shoppingmall.repository.ProductRepository;
@@ -8,11 +11,14 @@ public class ControllerTest {
 	private static ProductRepository productRepository = new ProductRepository();
 	
 	public static void main(String[] args) throws ShoppingMallException {
-		initialItems();
-		newItem();
-		
+//		initialItems();
+//		newItem();
+		Item item = new Item("aa", "bb", 50, 50, "cc");
+//		System.out.println(ChronoUnit.DAYS.between(LocalDateTime.now(), item.getRegidate()));
+		System.out.println(ChronoUnit.DAYS.between(item.getRegidate(),LocalDateTime.now()));
 	}
 
+	@SuppressWarnings("unused")
 	private static void initialItems() {
 		//전자제품
 		productRepository.save(new Item("2025 LG그램 프로 16 루나레이크 윈11 256G", "전자 제품", 2590000, 6758, "메모리타입 : LPDDR5X\r\n"
@@ -115,6 +121,7 @@ public class ControllerTest {
 		//랜덤
 		
 	}
+	@SuppressWarnings("unused")
 	private static void newItem() {
 		productRepository.save(new Item("삼성전자 S43FM701 스마트모니터 M7 M70F 107.9cm(43인치) 4K UHD 화이트", "전자 제품", 579000, 1918, "디스플레이크기 (대각선) : 107.9cm, 스탠드포함 (가로x높이x깊이) : 965.5 x 629.3 x 247.2 mm, 스탠드제외 (가로x높이x깊이) : 965.5 x 559.8 x 25.7 mm, 포장 (가로x높이x깊이) : 1198 x 677 x 159 mm,"));
 		productRepository.save(new Item("닌텐도 스위치 2 마리오카트 세트 월드 본체", "전자 제품", 687000, 5182, "캐릭터의 복잡한 움직임과 끝없이 펼처진 세계\r\n"

@@ -16,6 +16,7 @@ import com.shoppingmall.persistence.FileManagement;
 import com.shoppingmall.repository.OrderRepository;
 import com.shoppingmall.repository.PersonRepository;
 import com.shoppingmall.repository.ProductRepository;
+import com.shoppingmall.util.Constants;
 import com.shoppingmall.util.ValidationUtils;
 
 public class ManagerService extends UserService {
@@ -77,7 +78,10 @@ public class ManagerService extends UserService {
 	public HashMap<String, Manager> getManagers() {
 		return managers;
 	}
-
+	public void changePassword(Manager manager,String newpassword) {
+		managers.get(manager.getId()).setPassword(newpassword);
+		FileManagement.writeToFile(Constants.MANAGER_DATA_FILE, managers.values().stream().toList());
+	}
 	// 1. 주문 내역 확인
 	public void showAllOrders() {
 		System.out.println("=== 전체 주문 내역 ===");

@@ -116,7 +116,9 @@ public class UserService {
 	    Order order = new Order(customer, cartItems);
 	    orders.put(order.getOrderID(), order);
 	    customer.addPoint(order);
+	    customer.addOrderID(order.getOrderID());
 	    OrderRepository orderRepository = new OrderRepository();
+	    FileManagement.writeToFile(OrderRepository.FILE_NAME, orders.values().stream().toList());
 	    orderRepository.save(order);
 	    System.out.printf("주문 완료! 주문번호: %s, 총액: %,d원\n", order.getOrderID(), order.getTotalAmount());
 	}

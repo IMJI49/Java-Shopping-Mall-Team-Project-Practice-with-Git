@@ -509,7 +509,7 @@ public class MainController {
 									 * delivered가 된 상품이 존재하면 리뷰달기
 									 */
 									System.out.println("\n========  주문 내역 조회  =============");
-
+									showUserOrdersMenu(customer);
 									System.out.println("======================================\n");
 									break;
 

@@ -2,9 +2,10 @@ package com.shoppingmall.models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.io.Serializable;
 
-
-public class Order {
+@SuppressWarnings("serial")
+public class Order implements Serializable {
 
     public enum Status { PENDING, CONFIRM, SHIPPING, DELIVERED, CANCELLED }
 

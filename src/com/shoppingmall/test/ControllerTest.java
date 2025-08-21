@@ -11,8 +11,8 @@ public class ControllerTest {
 	private static ProductRepository productRepository = new ProductRepository();
 	
 	public static void main(String[] args) throws ShoppingMallException {
-//		initialItems();
-//		newItem();
+		initialItems();
+		newItem();
 		Item item = new Item("aa", "bb", 50, 50, "cc");
 //		System.out.println(ChronoUnit.DAYS.between(LocalDateTime.now(), item.getRegidate()));
 		System.out.println(ChronoUnit.DAYS.between(item.getRegidate(),LocalDateTime.now()));
@@ -48,7 +48,7 @@ public class ControllerTest {
 				+ "기능성 반팔로 신축성이 뛰어나고 통풍이 잘됩니다."));
 		productRepository.save(new Item("플로랄프로렌 보이즈", "의류", 98000, 9679, "면 56%, 레이온 27%, 린넨 17%\r\n"
 				+ "M , L, XL 사이즈가 있습니다."));
-		productRepository.save(new Item("상품명 : 와이드 청바지", "의류", 26900, 5154, "S(28), M(30), L(32), XL(34)\r\n"
+		productRepository.save(new Item("와이드 청바지", "의류", 26900, 5154, "S(28), M(30), L(32), XL(34)\r\n"
 				+ "소재 : 대님, 면"));
 		productRepository.save(new Item("버뮤다 청바지", "의류", 25800, 9107, "여름용 청바지\r\n"
 				+ "S(24~26), M(26~28), L(28~30), XL(~32),2XL(~34)\r\n"

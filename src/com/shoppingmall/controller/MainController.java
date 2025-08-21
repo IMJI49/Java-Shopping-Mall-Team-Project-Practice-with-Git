@@ -26,13 +26,14 @@ public class MainController {
 	private Scanner scanner;
 	private ManagerService managerService;
 	private UserService userService;
+	@SuppressWarnings("unused")
 	private ProductRepository productRepository;
 	private PersonRepository personRepository;
 
 	public MainController() {
 		this.scanner = new Scanner(System.in);
-		managerService = new ManagerService("Java Shopping Mall");
 		userService = new UserService("Java Shopping Mall");
+		managerService = (ManagerService) userService;
 		productRepository = new ProductRepository();
 		personRepository = new PersonRepository();
 	}
@@ -279,6 +280,7 @@ public class MainController {
 							} catch (ShoppingMallException e) {
 								System.err.println(e.getLocalizedMessage());
 							}
+							break;
 						case "4":
 							// 관리자 사용자 관리 메뉴
 							do {
@@ -294,7 +296,7 @@ public class MainController {
 								System.out.print("메뉴를 선택하세요: ");
 
 								menu3 = scanner.nextLine();
-								switch (menu) {
+								switch (menu3) {
 								case "1":
 									System.out.println("\n=======  전체 회원 조회  =========");
 									List<Customer> customerList = FileManagement.readFromFile(Constants.USER_DATA_FILE);
@@ -325,6 +327,7 @@ public class MainController {
 									String searchId = scanner.nextLine();
 									PersonRepository.showMemberDetails(searchId);
 									System.out.println("==================================");
+									break;
 								case "4":
 									System.out.println("\n========   회원 강제 탈퇴   ========");
 									System.out.print("🔍 회원 탈퇴를 원하는 ID를 입력해주세요: ");
@@ -649,8 +652,7 @@ public class MainController {
 				System.out.print("확정할 주문번호를 입력하세요: ");
 				String confirmOrderId = scanner.nextLine().trim();
 				try {
-					Order order = (Order) managerService.getOrders().get(confirmOrderId);
-					managerService.confirmOrder(order != null ? order.getStatus() : null, confirmOrderId);
+					managerService.confirmOrder(confirmOrderId);
 					System.out.println("주문이 확정되었습니다.");
 				} catch (Exception e) {
 					System.err.println("확정 실패: " + e.getMessage());
@@ -660,8 +662,7 @@ public class MainController {
 				System.out.print("취소할 주문번호를 입력하세요: ");
 				String cancelOrderId = scanner.nextLine().trim();
 				try {
-					Order order = (Order) managerService.getOrders().get(cancelOrderId);
-					managerService.cancelOrder(order != null ? order.getStatus() : null, cancelOrderId);
+					managerService.cancelOrder(cancelOrderId);
 					System.out.println("주문이 취소되었습니다.");
 				} catch (Exception e) {
 					System.err.println("취소 실패: " + e.getMessage());
@@ -714,7 +715,7 @@ public class MainController {
 						break;
 					}
 					System.out.print("추가 수량을 입력하세요: ");
-					int qty = Integer.parseInt(scanner.nextLine().trim().replaceAll("개., ", ""));
+					int qty = Integer.parseInt(scanner.nextLine().trim().replaceAll("[^0-9]", ""));
 					userService.addCart(customer, pName, qty);
 					System.out.println("장바구니에 상품이 추가되었습니다.");
 				} catch (Exception e) {
@@ -730,7 +731,7 @@ public class MainController {
 						if (ci.getItem().getName().equals(targetName)) {
 							System.out.print("새 수량을 입력하세요: ");
 							try {
-								int newQty = Integer.parseInt(scanner.nextLine().trim().replaceAll("개., ", ""));
+								int newQty = Integer.parseInt(scanner.nextLine().trim().replaceAll("[^0-9]", ""));
 								if (newQty <= 0) {
 									System.out.println("수량은 1 이상이어야 합니다.");
 									break;
@@ -840,15 +841,16 @@ public class MainController {
 				System.out.print("상품 카테고리를 입력해 주세요: ");
 				String category = scanner.nextLine();
 				System.out.print("상품 가격을 입력해 주세요: ");
-				String sPrice = scanner.nextLine().trim().replaceAll("원., ", "");
+				String sPrice = scanner.nextLine().trim().replaceAll("[^0-9]", "");
 				int price = Integer.parseInt(sPrice);
 				System.out.print("상품 수량을 입력해 주세요: ");
-				String sQuantity = scanner.nextLine().trim().replaceAll("개., ", "");
+				String sQuantity = scanner.nextLine().trim().replaceAll("[^0-9]", "");
 				int quantity = Integer.parseInt(sQuantity);
 				System.out.print("상품 설명을 입력해 주세요: ");
 				String description = scanner.nextLine();
 				Item newItem = new Item(name, category, price, quantity, description);
-				productRepository.save(newItem);
+				FileManagement.writeToFile(Constants.PRODUCT_DATA_FILE,
+						userService.registItem(newItem).values().stream().toList());
 				System.out.println("상품이 등록되었습니다!");
 				System.out.println("=====================================");
 				break;
@@ -875,13 +877,13 @@ public class MainController {
 				}
 				if (modifyingItemList.contains("가격")) {
 					System.out.print("상품의 가격을 입력해주세요:");
-					sPrice = scanner.nextLine().trim().replaceAll("원., ", "");
+					sPrice = scanner.nextLine().trim().replaceAll("[^0-9]", "");
 					price = Integer.parseInt(sPrice);
 					modifyItem.setPrice(price);
 				}
 				if (modifyingItemList.contains("개수")) {
 					System.out.print("상품의 개수를 입력해주세요:");
-					sQuantity = scanner.nextLine().trim().replaceAll("개., ", "");
+					sQuantity = scanner.nextLine().trim().replaceAll("[^0-9]", "");
 					ValidationUtils.requireMaxLength(sQuantity, 7, "상품 개수는 999,999개를 넘을 수 없습니다.");
 					quantity = Integer.parseInt(sQuantity);
 					modifyItem.setQuantity(quantity);
@@ -894,6 +896,7 @@ public class MainController {
 				}
 				FileManagement.writeToFile(Constants.PRODUCT_DATA_FILE,
 						userService.getItems().values().stream().toList());
+				managerService.productModify(modifyItem);
 				System.out.println("상품이 수정되었습니다!");
 				System.out.println("================================\n");
 				break;
@@ -930,14 +933,14 @@ public class MainController {
 				}
 				if (pmselect.equals("추가") || pmselect.equals("증가")) {
 					System.out.print("개수를 입력해주세요: ");
-					sQuantity = scanner.nextLine().trim().replaceAll("개., ", "");
+					sQuantity = scanner.nextLine().trim().replaceAll("[^0-9]", "");
 					ValidationUtils.requireMaxLength(sQuantity, 7, "상품 개수는 999,999개를 넘을 수 없습니다.");
 					quantity = Integer.parseInt(sQuantity);
 					modifyItem.productPlusStock(quantity);
 				}
 				if (pmselect.equals("감소")) {
 					System.out.print("개수를 입력해주세요: ");
-					sQuantity = scanner.nextLine().trim().replaceAll("개., ", "");
+					sQuantity = scanner.nextLine().trim().replaceAll("[^0-9]", "");
 					ValidationUtils.requireMaxLength(sQuantity, 7, "상품 개수는 999,999개를 넘을 수 없습니다.");
 					quantity = Integer.parseInt(sQuantity);
 					modifyItem.productMinusStock(quantity);

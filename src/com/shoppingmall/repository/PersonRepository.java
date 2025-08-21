@@ -301,7 +301,6 @@ public class PersonRepository {
         System.out.println("이메일: " + member.getEmail());
         System.out.println("전화번호: " + member.getPhoneNumber());
         System.out.println("주소: " + member.getAddress());
-        System.out.println("역할: " + member.getRole());
         
         // 아래: 해당 회원의 주문
        

@@ -122,7 +122,7 @@ public class Item implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("이름 : %s, 카테고리 : %s, 가격 : %,d", name,category,price);
+		return String.format("이름 : %s, 카테고리 : %s, 가격 : %,d, %s", name,category,price,itemID);
 	}
 
 }

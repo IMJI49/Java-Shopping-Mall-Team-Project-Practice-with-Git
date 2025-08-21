@@ -1,5 +1,7 @@
 package com.shoppingmall.repository;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -14,13 +16,13 @@ public class ProductRepository {
 	public static final String FILE_NAME = Constants.PRODUCT_DATA_FILE;
 	
 	// 상품 저장
+	@SuppressWarnings("unchecked")
 	public Item save(Item item) {
 		// 기존 상품 목록 조회
 		List<Item> items = FileManagement.readFromFile(FILE_NAME);
-		
+//		items.addAll((Collection<? extends Item>) Arrays.asList(items));
 		// 새 상품 추가
 		items.add(item);
-		
 		// 파일에 저장
 		FileManagement.writeToFile(FILE_NAME, items);
 		

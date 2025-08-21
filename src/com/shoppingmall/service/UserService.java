@@ -22,6 +22,7 @@ import com.shoppingmall.repository.OrderRepository;
 import com.shoppingmall.repository.PersonRepository;
 import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.repository.UserRepository;
+import com.shoppingmall.util.Constants;
 import com.shoppingmall.util.ValidationUtils;
 
 
@@ -113,25 +114,39 @@ public class UserService {
 	    Order order = new Order(customer, cartItems);
 	    orders.put(order.getOrderID(), order);
 	    customer.addPoint(order);
+	    OrderRepository orderRepository = new OrderRepository();
+	    orderRepository.save(order);
 	    System.out.printf("주문 완료! 주문번호: %s, 총액: %,d원\n", order.getOrderID(), order.getTotalAmount());
 	}
 
-	public void completeDelivery(Status status, String orderID) throws ValidationException {
-		if (status != Status.SHIPPING)
-			throw new ValidationException("배송 중 상태에서만 배송 완료가 가능합니다.");
-		status = Status.DELIVERED;
-		shippingDate = LocalDateTime.now();
-		System.out.printf("✅ [%s] 주문의 배송이 완료되었습니다./n", orderID);
-	}
+	public void completeDelivery(String orderID) throws ValidationException {
+	    Order order = orders.get(orderID);
+	    if (order == null) {
+	        throw new ValidationException("해당 주문을 찾을 수 없습니다: " + orderID);
+	    }
 
-	public void cancelOrder(Status status, String orderID) throws ValidationException {
-		if (status != Status.PENDING)
-			throw new ValidationException("PENDING 상태에서만 취소 가능합니다.");
-		status = Status.CANCELLED;
-		
-		System.err.printf("⚠ 주문 [%s]가 취소되었습니다./n", orderID);
-	}
+	    if (order.getStatus() != Status.SHIPPING) {
+	        throw new ValidationException("배송 중 상태에서만 배송 완료가 가능합니다.");
+	    }
 
+	    order.setStatus(Status.DELIVERED);
+	    shippingDate = LocalDateTime.now();
+	    System.out.printf("✅ [%s] 주문의 배송이 완료되었습니다.\n", orderID);
+	}
+	
+	public void cancelOrder(String orderID) throws ValidationException {
+	    Order order = orders.get(orderID);
+	    if (order == null) {
+	        throw new ValidationException("해당 주문을 찾을 수 없습니다: " + orderID);
+	    }
+
+	    if (order.getStatus() != Status.PENDING) {
+	        throw new ValidationException("PENDING 상태에서만 취소 가능합니다.");
+	    }
+
+	    order.setStatus(Status.CANCELLED);
+	    System.err.printf("⚠ 주문 [%s]가 취소되었습니다.\n", orderID);
+	}
     
     // 리뷰 작성 메서드 구현
     public void addReview(String itemId, double rating, String reviewText) {
@@ -297,10 +312,12 @@ public class UserService {
 		for (Item item : items.values()) {
 			System.out.println(item);
 		}
+		System.out.println(items.size());
 	}
 
 	public void changePassword(Customer customer,String newpassword) {
 		customers.get(customer.getId()).setPassword(newpassword);
+		FileManagement.writeToFile(Constants.USER_DATA_FILE, customers.values().stream().toList());
 	}
 	
 	// 모든 사용자 데이터 반환    -- toString에 비밀번호가 포함되어있지 않으므로, 비밀번호 *로 바꾸는 코드는 주석처리함
@@ -428,7 +445,12 @@ public class UserService {
 		}
 	}
 	public HashMap<String, Item> deleteItem(Item delItem){
+		System.out.println(items.get(delItem.getItemID()));
 		items.remove(delItem.getItemID());
+		return items;
+	}
+	public HashMap<String, Item> registItem(Item regiItem){
+		items.put(regiItem.getItemID(),regiItem);
 		return items;
 	}
 	public HashMap<String, Item> getItems() {

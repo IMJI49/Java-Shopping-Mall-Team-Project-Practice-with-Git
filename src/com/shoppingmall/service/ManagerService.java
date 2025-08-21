@@ -1,21 +1,16 @@
 package com.shoppingmall.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.shoppingmall.exception.ValidationException;
-import com.shoppingmall.models.CartItem;
-import com.shoppingmall.models.Customer;
 import com.shoppingmall.models.Item;
 import com.shoppingmall.models.Manager;
 import com.shoppingmall.models.Order;
 import com.shoppingmall.models.Order.Status;
 import com.shoppingmall.persistence.FileManagement;
-import com.shoppingmall.repository.OrderRepository;
 import com.shoppingmall.repository.PersonRepository;
-import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.util.Constants;
 import com.shoppingmall.util.ValidationUtils;
 
@@ -50,29 +45,11 @@ public class ManagerService extends UserService {
 
 	public ManagerService(String mallName) {
 		super(mallName);
-		this.mallName = mallName;
-		items = new HashMap<String, Item>();
-		List<Item> itemList = FileManagement.readFromFile(ProductRepository.FILE_NAME);
-		for (Item item : itemList) {
-			items.put(item.getItemID(), item);
-		}
-		customers = new HashMap<String, Customer>();
-		List<Customer> customerList = FileManagement.readFromFile(PersonRepository.FILE_NAME_CUSTOMER);
-		for (Customer customer : customerList) {
-			customers.put(customer.getId(), customer);
-		}
 		managers = new HashMap<String, Manager>();
 		List<Manager> managerList = FileManagement.readFromFile(PersonRepository.FILE_NAME_MANAGER);
 		for (Manager manager : managerList) {
 			managers.put(manager.getId(), manager);
 		}
-		orders = new HashMap<String, Order>();
-		List<Order> orderList = FileManagement.readFromFile(OrderRepository.FILE_NAME);
-		for (Order order : orderList) {
-			orders.put(order.getOrderID(), order);
-		}
-		carts = new HashMap<String, ArrayList<CartItem>>();
-		review = new HashMap<ArrayList<String>, String>();
 	}
 	
 	public HashMap<String, Manager> getManagers() {
@@ -90,16 +67,28 @@ public class ManagerService extends UserService {
 				order.getOrderID(), order.getCustomer().getName(), order.getStatus(), order.getTotalAmount());
 		}
 	}
-	public void confirmOrder(Status status, String orderID) throws ValidationException {
-		ValidationUtils.orderPendingCheck(status, "현재 상태에서는 주문 확정이 불가능합니다.");
-		status = Status.CONFIRM;
-		orders.get(orderID).setStatus(status);
+	public void confirmOrder(String orderID) throws ValidationException {
+	    Order order = orders.get(orderID);
+	    if (order == null) {
+	        throw new ValidationException("해당 주문을 찾을 수 없습니다: " + orderID);
+	    }
+
+	    ValidationUtils.orderPendingCheck(order.getStatus(), "현재 상태에서는 주문 확정이 불가능합니다.");
+	    order.setStatus(Status.CONFIRM);
 	}
-	public void startShipping(Status status, String orderID) throws ValidationException {
-		if (status != Status.CONFIRM)
-			throw new ValidationException("확정된 주문만 배송을 시작할 수 있습니다.");
-		status = Status.SHIPPING;
-		System.out.printf("📦 %s님 주문의 배송이 시작되었습니다. (주문번호 : %s)\n", customers.get(orderID).getName(), orderID);
+	public void startShipping(String orderID) throws ValidationException {
+	    Order order = orders.get(orderID);
+	    if (order == null) {
+	        throw new ValidationException("해당 주문을 찾을 수 없습니다: " + orderID);
+	    }
+
+	    if (order.getStatus() != Status.CONFIRM) {
+	        throw new ValidationException("확정된 주문만 배송을 시작할 수 있습니다.");
+	    }
+
+	    order.setStatus(Status.SHIPPING);
+	    System.out.printf("📦 %s님 주문의 배송이 시작되었습니다. (주문번호 : %s)\n",
+	        order.getCustomer().getName(), orderID);
 	}
 	// 3일 지난 배송 자동 완료
 	public void autoCompleteDeliveryIfOver3Days(Status status, String orderID) {
@@ -110,6 +99,16 @@ public class ManagerService extends UserService {
 		}
 	}
 
+	public void productregist(Item newItem) {
+		items.put(newItem.getItemID(),newItem);
+	}
+	public void productModify(Item modifyItem) {
+		items.remove(modifyItem.getItemID());
+		items.put(modifyItem.getItemID(),modifyItem);
+	}
+	public void productdelete(Item delItem) {
+		items.remove(delItem.getItemID());
+	}
 }
 
 	
